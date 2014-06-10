@@ -63,8 +63,7 @@
     
     [self getSupervisorList];
     
-    if (self.declaration == nil) {
-        self.declaration = [[Declaration alloc] init];
+    if (_declaration == nil) {
         self.navItem.text = @"Declaratie Aanmaken";
     }
     else if(self.edit)
