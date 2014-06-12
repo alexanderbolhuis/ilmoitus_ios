@@ -5,36 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>3DF79F6B-5B71-41D4-AA44-DF2D92D4C068</string>
+	<string>A47A4047-201D-4946-86AB-7611BD9BF16D</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Ilmoitus</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>AFD28DA0-3327-4B83-A720-63EC5F4AB27B</key>
-		<string>ssh://github.com/abolhuis88/ilmoitus_mobile.git</string>
+		<key>BBAABC4F-7AA0-414D-8D7E-904AB70C53E3</key>
+		<string>https://github.com/rhsattev/ilmoitus_ios.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>iOS/Ilmoitus/Ilmoitus.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>AFD28DA0-3327-4B83-A720-63EC5F4AB27B</key>
+		<key>BBAABC4F-7AA0-414D-8D7E-904AB70C53E3</key>
 		<string>../../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/abolhuis88/ilmoitus_mobile.git</string>
+	<string>https://github.com/rhsattev/ilmoitus_ios.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>AFD28DA0-3327-4B83-A720-63EC5F4AB27B</string>
+	<string>BBAABC4F-7AA0-414D-8D7E-904AB70C53E3</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>AFD28DA0-3327-4B83-A720-63EC5F4AB27B</string>
+			<string>BBAABC4F-7AA0-414D-8D7E-904AB70C53E3</string>
 			<key>IDESourceControlWCCName</key>
-			<string>ilmoitus_mobile</string>
+			<string>ilmoitus_ios</string>
 		</dict>
 	</array>
 </dict>
