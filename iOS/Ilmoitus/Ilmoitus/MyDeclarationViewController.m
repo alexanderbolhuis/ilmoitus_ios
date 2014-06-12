@@ -32,7 +32,7 @@
     self.navItem.title = [NSString stringWithFormat:@"Ingelogd als %@ %@ (%@)", [[NSUserDefaults standardUserDefaults] stringForKey:@"person_first_name"], [[NSUserDefaults standardUserDefaults] stringForKey:@"person_last_name"], [[NSUserDefaults standardUserDefaults] stringForKey:@"person_employee_number"]];
     
     // GET Actions when shwoing view
-    [self declarationsFromServer];
+    [self getDeclarations];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -40,22 +40,50 @@
     [super viewDidAppear:animated];
     self.navigationController.navigationBar.hidden = NO;
     // GET Actions when showing view
-    [self declarationsFromServer];
+    [self getDeclarations];
     
 }
 
 // For refreshing tableview
 -(void) refreshInvoked:(id)sender forState:(UIControlState)state {
-    [self declarationsFromServer];
+    [self getDeclarations];
 }
 
-- (void)declarationsFromServer
+- (void)getDeclarations
 {
     // Do Request
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
+    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
+    [manager.reachabilityManager startMonitoring];
+    
+    [manager.reachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status)
+     {
+         switch (status)
+         {
+             case AFNetworkReachabilityStatusReachableViaWWAN:
+             case AFNetworkReachabilityStatusReachableViaWiFi:
+                 NSLog(@"Connected to network");
+                 [self declarationsFromServer:manager];
+                 break;
+             case AFNetworkReachabilityStatusNotReachable:
+                 NSLog(@"No internet connection");
+                 [self showErrorMessage:@"Geen verbinding" : @"Kon geen verbinding maken met een netwerk"];
+                 break;
+             default:
+                 NSLog(@"Unknown internet connection");
+                 [self showErrorMessage:@"Onbekende verbinding" : @"Verbonden met een onbekend soort netwerk"];
+                 break;
+         }
+     }];
+}
+
+- (void) declarationsFromServer:(AFHTTPRequestOperationManager*) manager
+{
     NSString *url = [NSString stringWithFormat:@"%@/current_user/declarations", baseURL];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError* error;
@@ -89,8 +117,144 @@
         [self.refreshControl endRefreshing];
         
         NSLog(@"GET request success response for all declarations: %@", json);
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"GET request Error for all declarations: %@", error);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error)
+    {
+        switch (operation.response.statusCode)
+        {
+            case 400: // Bad Request
+                NSLog(@"GET request Error 400 for all declarations: %@", error);
+                [self showErrorMessage:@"Verkeerde aanvraag" :operation.responseString];
+                break;
+                
+                
+            case 401: // Unauthorized
+                NSLog(@"GET request Error 401 for all declarations: %@", error);
+                [self showErrorMessage:@"Onvoldoende rechten" :operation.responseString];
+                break;
+                
+                
+            case 403: // Forbidden
+                NSLog(@"GET request Error 403 for all declarations: %@", error);
+                [self showErrorMessage:@"Aanvraag niet toegestaan" :operation.responseString];
+                break;
+                
+                
+                
+            case 404: // Not Found
+                NSLog(@"GET request Error 404 for all declarations: %@", error);
+                [self showErrorMessage:@"Niet gevonden" :operation.responseString];
+                break;
+                break;
+                
+                
+            case 405: // Method Not Allowed
+                NSLog(@"GET request Error 405 for all declarations: %@", error);
+                [self showErrorMessage:@"Aanvraag niet toegestaan" :operation.responseString];
+                break;
+                
+                
+            case 406: // Not Acceptable
+                NSLog(@"GET request Error 406 for all declarations: %@", error);
+                [self showErrorMessage:@"Aanvraag niet toegestaan" :operation.responseString];
+                break;
+                
+                
+            case 407: // Proxy Authentication Required
+                NSLog(@"GET request Error 407 for all declarations: %@", error);
+                [self showErrorMessage:@"Onvoldoende rechten op proxy" :operation.responseString];
+                break;
+                
+                
+            case 408: // Request Timeout
+                NSLog(@"GET request Error 408 for all declarations: %@", error);
+                [self showErrorMessage:@"Aanvraag tijd voorbij" :operation.responseString];
+                break;
+                
+                
+            case 409: // Conflict
+                NSLog(@"GET request Error 409 for all declarations: %@", error);
+                [self showErrorMessage:@"Conflict op verzonden data" :operation.responseString];
+                break;
+                
+                
+            case 410: // Gone
+                NSLog(@"GET request Error 410 for all declarations: %@", error);
+                [self showErrorMessage:@"Actie verdwenen" :operation.responseString];
+                break;
+                
+                
+            case 411: // Length Required
+                NSLog(@"GET request Error 411 for all declarations: %@", error);
+                [self showErrorMessage:@"Onjuiste waardes" :operation.responseString];
+                break;
+                
+                
+            case 412: // Precondition Failed
+                NSLog(@"GET request Error 412 for all declarations: %@", error);
+                [self showErrorMessage:@"Randvoorwaarde onjuist" :operation.responseString];
+                break;
+                
+                
+            case 413: // Request Entity Too Large
+                NSLog(@"GET request Error 413 for all declarations: %@", error);
+                [self showErrorMessage:@"Aanvraag entiteit onjuist" :operation.responseString];
+                break;
+                
+            case 414: // Request-URI Too Long
+                NSLog(@"GET request Error 414 for all declarations: %@", error);
+                [self showErrorMessage:@"Aanvraag url te lang" :operation.responseString];
+                break;
+                
+                
+            case 415: // Unsupported Media Type
+                NSLog(@"GET request Error 415 for all declarations: %@", error);
+                [self showErrorMessage:@"media type niet ondersteund" :operation.responseString];
+                break;
+                
+                
+            case 416: // Requested Range Not Satisfiable
+                NSLog(@"GET request Error 416 for all declarations: %@", error);
+                [self showErrorMessage:@"Aanvraag lengte voldoet niet" :operation.responseString];
+                break;
+                
+                
+            case 417: // Expectation Failed
+                NSLog(@"GET request Error 417 for all declarations: %@", error);
+                [self showErrorMessage:@"Onbekende verwachting" :operation.responseString];
+                break;
+                
+            case 500: // Internal Server Error
+                NSLog(@"GET request Error 500 for all declarations: %@", error);
+                [self showErrorMessage:@"Interne server error" :operation.responseString];
+                break;
+                
+            case 501: // Not Implemented
+                NSLog(@"GET request Error 501 for all declarations: %@", error);
+                [self showErrorMessage:@"Niet geïmplementeerd" :operation.responseString];
+                break;
+                
+            case 502: // Bad Gateway
+                NSLog(@"GET request Error 502 for all declarations: %@", error);
+                break;
+                
+            case 503: // Service Unavailable
+                NSLog(@"GET request Error 503 for all declarations: %@", error);
+                [self showErrorMessage:@"Server niet bereikbaar" :operation.responseString];
+                break;
+                
+            case 504: // Gateway Timeout
+                NSLog(@"GET request Error 504 for all declarations: %@", error);
+                break;
+                
+            case 505: // HTTP Version Not Supported
+                NSLog(@"GET request Error 505 for all declarations: %@", error);
+                [self showErrorMessage:@"HTML versie niet ondersteund" :operation.responseString];
+                break;
+            default:
+                NSLog(@"GET request Error for all declarations: %@", error);
+                [self showErrorMessage:@"Fout" :operation.responseString];
+                break;
+        }
     }];
     
     // Reload the data
@@ -220,5 +384,15 @@
         //TODO: set to correct value!
         destination.edit = false;//[dec.status  isEqual: @"Open"];
     }
+}
+
+- (void) showErrorMessage: (NSString*)errorTitle:(NSString*)errorMessage
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle
+                                                    message:errorMessage
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 @end
