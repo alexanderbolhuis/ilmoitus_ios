@@ -16,6 +16,7 @@
     if (self)
     {
         self.subtype = [[DeclarationSubType alloc]init];
+        self.type = [[DeclarationType alloc] init];
     }
     return self;
 }

@@ -24,6 +24,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *costField;
 @property (weak, nonatomic) IBOutlet UITextField *costDecimalField;
 @property (weak, nonatomic) IBOutlet UITextField *commentField;
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttonCollection;
+@property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *inputCollection;
 @property (nonatomic) UIDatePicker *datePicker;
 @property (nonatomic) UIPickerView *typePicker;
 @property (nonatomic) UIPickerView *subTypePicker;
@@ -36,15 +38,6 @@
 @end
 
 @implementation NewDeclarationLineViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -115,36 +108,97 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)viewDidLoad
+-(void)reloadLineData
+{
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
+    
+    if(self.declarationLine == nil)
+    {
+        NSDate *date = [NSDate date];
+        [dateFormat setDateFormat:@"dd-MM-yyyy"];
+        NSString *dateString = [dateFormat stringFromDate:date];
+        [dateFormat setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss.S"];
+        self.declarationLine = [[DeclarationLine alloc] init];
+        self.declarationLine.date = [dateFormat stringFromDate:date];
+        
+        self.dateField.text = dateString;
+    }
+    else
+    {
+        NSDate *date =[[NSDate alloc]init];
+        [dateFormat setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss.S"];
+        date = [dateFormat dateFromString:self.declarationLine.date];
+        [dateFormat setDateFormat:@"dd-MM-yyyy"];
+        
+        self.dateField.text = [dateFormat stringFromDate:date];
+        self.commentField.text = self.declarationLine.description;
+        int intCost = floorf(self.declarationLine.cost);
+        int decimal = floorf(((self.declarationLine.cost - intCost)*100));
+        self.costField.text = [NSString stringWithFormat:@"%d", intCost];
+        self.costDecimalField.text = [NSString stringWithFormat:@"%d", decimal];
+        self.typeField.text = self.declarationLine.type.mainTypeName;
+        self.subtypeField.text = self.declarationLine.subtype.subTypeName;
+    }
+}
+
+-(void)setModus:(StateType)state
+{
+    switch (state) {
+        case EDIT:
+            [self setModusEdit];
+            break;
+        case VIEW:
+            [self setModusView];
+            break;
+        default:
+            [self setModusNew];
+            break;
+    }
+}
+
+-(void)setModusNew
+{
+    [self setupImagePicker];
+    [self setupInputFields];
+    [self setupPickers];
+    self.title = @"declaratie regel maken";
+}
+
+-(void)setModusEdit
+{
+    [self setModusNew];
+    self.title = @"declaratie regel aanpassen";
+}
+
+-(void)setModusView
+{
+    self.title =@"declaratie regel inzien";
+    [self tearDownInput];
+}
+
+-(void) tearDownInput
+{
+    for (UIButton *button in self.buttonCollection)
+    {
+        button.hidden = true;
+    }
+    for(UITextField *input in self.inputCollection)
+    {
+        input.enabled = false;
+    }
+}
+
+-(void)setupImagePicker
 {
     imagePicker = [[UIImagePickerController alloc]init];
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    imagePicker.delegate = self;
+}
+
+-(void)setupPickers
+{
     self.dateField.delegate = self;
-    self.costField.delegate = self;
     self.typeField.delegate = self;
     self.subtypeField.delegate = self;
-    self.costField.keyboardType = UIKeyboardTypeNumberPad;
-    self.costDecimalField.delegate = self;
-    self.costDecimalField.keyboardType = UIKeyboardTypeNumberPad;
-    self.commentField.delegate = self;
-    [self.commentField setReturnKeyType: UIReturnKeyDone];
-    imagePicker.delegate = self;
-    NSDate *date = [NSDate date];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
-    [dateFormat setDateFormat:@"dd-MM-yyyy"];
-    NSString *dateString = [dateFormat stringFromDate:date];
-    self.dateField.text = dateString;
-    [dateFormat setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss.S"];
-    self.declarationLine = [[DeclarationLine alloc] init];
-    self.declarationLine.date = [dateFormat stringFromDate:date];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
-                                   initWithTarget:self
-                                   action:@selector(dismissKeyboard)];
-    
-    [self.view addGestureRecognizer:tap];
-    
     // Create date picker
     self.datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 44, 0, 0)];
     self.datePicker.datePickerMode = UIDatePickerModeDate;
@@ -216,6 +270,33 @@
     [subTypeBarItems addObject:cancelSubTypeBtn];
     
     [self.subTypePickerToolbar setItems:subTypeBarItems animated:YES];
+}
+
+-(void)setupInputFields
+{
+    self.costField.delegate = self;
+    self.costField.keyboardType = UIKeyboardTypeNumberPad;
+    self.costDecimalField.delegate = self;
+    self.costDecimalField.keyboardType = UIKeyboardTypeNumberPad;
+    self.commentField.delegate = self;
+    [self.commentField setReturnKeyType: UIReturnKeyDone];
+}
+
+- (void)viewDidLoad
+{
+    
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
+    
+    [self setModus:self.state];
+    [self reloadLineData];
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -296,7 +377,7 @@
         [self.pickerViewPopup addSubview:self.typePicker];
         [self.pickerViewPopup showInView:self.view];
         [self.pickerViewPopup setBounds:CGRectMake(0,0,320, 464)];
-
+        
     } else if (textField == self.subtypeField) {
         [self.subtypeField resignFirstResponder];
         self.pickerViewPopup = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];

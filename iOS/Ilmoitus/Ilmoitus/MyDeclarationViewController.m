@@ -181,10 +181,17 @@
             DeclarationLine *foundLine = [[DeclarationLine alloc]init];
             foundLine.cost = [line[@"cost"] floatValue];
             foundLine.date = line[@"receipt_date"];
+            
             DeclarationSubType *declarationSubType = [[DeclarationSubType alloc]init];
             NSDictionary *declarationSubTypeDict = line[@"declaration_sub_type"];
             declarationSubType.subTypeName = declarationSubTypeDict[@"name"];
             foundLine.subtype = declarationSubType;
+            
+            DeclarationType *declarationType = [[DeclarationType alloc]init];
+            NSDictionary * declarationTypeDict = line[@"declaration_type"];
+            declarationType.mainTypeName = declarationTypeDict[@"name"];
+            declarationType.ident = [declarationTypeDict[@"id" ] longLongValue];
+            foundLine.type = declarationType;
             
             [lines addObject:foundLine];
             //TODO DeclarationType
@@ -217,8 +224,15 @@
         [self setFullDeclaration:dec.ident destination:destination];
 
         destination.declaration = [[Declaration alloc] init];
-        //TODO: set to correct value!
-        destination.edit = false;//[dec.status  isEqual: @"Open"];
+
+        if([dec.status  isEqual: @"Open"])
+        {
+            destination.state = EDIT;
+        }
+        else
+        {
+            destination.state = VIEW;
+        }
     }
 }
 @end
