@@ -50,6 +50,7 @@
 		84BE584C192F7EF700ECE63A /* DeclarationType.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE584B192F7EF700ECE63A /* DeclarationType.m */; };
 		84BE584F192F7F0D00ECE63A /* DeclarationSubType.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE584E192F7F0D00ECE63A /* DeclarationSubType.m */; };
 		A273EFC4192BFEF50019B643 /* Attachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A273EFC3192BFEF50019B643 /* Attachment.m */; };
+		A2BF670D194B6E9600F063A4 /* NewAttachmentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2BF670C194B6E9500F063A4 /* NewAttachmentViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +145,8 @@
 		A273EFC2192BFEF50019B643 /* Attachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Attachment.h; sourceTree = "<group>"; };
 		A273EFC3192BFEF50019B643 /* Attachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Attachment.m; sourceTree = "<group>"; };
 		A276B5A31947B01B00B871BD /* StateType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StateType.h; sourceTree = "<group>"; };
+		A2BF670B194B6E9500F063A4 /* NewAttachmentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewAttachmentViewController.h; sourceTree = "<group>"; };
+		A2BF670C194B6E9500F063A4 /* NewAttachmentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewAttachmentViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +296,8 @@
 				84BE5844192F54A800ECE63A /* DeclarationTypeController.h */,
 				84BE5845192F54A800ECE63A /* DeclarationTypeController.m */,
 				A276B5A31947B01B00B871BD /* StateType.h */,
+				A2BF670B194B6E9500F063A4 /* NewAttachmentViewController.h */,
+				A2BF670C194B6E9500F063A4 /* NewAttachmentViewController.m */,
 			);
 			path = Ilmoitus;
 			sourceTree = "<group>";
@@ -442,6 +447,7 @@
 				463019F01917D1D0004D2613 /* AFHTTPSessionManager.m in Sources */,
 				463019F91917D1D1004D2613 /* UIAlertView+AFNetworking.m in Sources */,
 				463019F41917D1D1004D2613 /* AFURLRequestSerialization.m in Sources */,
+				A2BF670D194B6E9600F063A4 /* NewAttachmentViewController.m in Sources */,
 				46D94ED719063EA2008E6C01 /* LoginViewController.m in Sources */,
 				463019F61917D1D1004D2613 /* AFURLSessionManager.m in Sources */,
 				46D94ED419063D12008E6C01 /* SettingsViewController.m in Sources */,

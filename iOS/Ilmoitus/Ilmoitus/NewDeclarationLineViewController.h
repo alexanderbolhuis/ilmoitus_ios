@@ -8,17 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "DeclarationLine.h"
-#import "Attachment.h"
 #import "StateType.h"
 
-@interface NewDeclarationLineViewController : UIViewController <UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
-{
-    UIImagePickerController *imagePicker;
-}
+@interface NewDeclarationLineViewController : UIViewController <UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 
 -(void)setModus:(StateType)state;
 
 @property (nonatomic) StateType state;
 @property DeclarationLine *declarationLine;
-@property Attachment *attachment;
 @end

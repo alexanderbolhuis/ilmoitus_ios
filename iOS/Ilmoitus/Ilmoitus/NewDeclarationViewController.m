@@ -8,6 +8,7 @@
 
 #import "NewDeclarationViewController.h"
 #import "NewDeclarationLineViewController.h"
+#import "NewAttachmentViewController.h"
 #import "Declaration.h"
 #import "DeclarationLine.h"
 #import "Supervisor.h"
@@ -60,6 +61,8 @@
     self.comment.delegate = self;
     self.declarationLineTable.delegate = self;
     self.declarationLineTable.dataSource = self;
+    self.attachmentTable.delegate = self;
+    self.attachmentTable.dataSource = self;
     
     [self getSupervisorList];
     
@@ -77,12 +80,12 @@
         {
             button.hidden = YES;
         }
-
+        
     }
-
+    
     [self declarationLinesChanged];
     self.comment.text = self.declaration.comment;
-
+    
     
     // Textfield delegates
     self.supervisor.delegate = self;
@@ -96,9 +99,9 @@
     self.comment.clipsToBounds = YES;
     
     [self.supervisor addTarget:self
-                    action:@selector(textFieldDidChange)
-          forControlEvents:UIControlEventEditingChanged];
-
+                        action:@selector(textFieldDidChange)
+              forControlEvents:UIControlEventEditingChanged];
+    
     [self createSupervisorPicker];
 }
 
@@ -154,40 +157,65 @@
 
 -(IBAction)unwindToNewDeclaration:(UIStoryboardSegue *)segue
 {
-    NewDeclarationLineViewController * source = [segue sourceViewController];
-    switch (source.state)
+    if([[segue sourceViewController] isKindOfClass: [NewDeclarationLineViewController class]])
     {
-        case NEW:
-            if(source.declarationLine != nil)
-            {
-                [self.declaration.lines addObject:source.declarationLine];
-                [self declarationLinesChanged];
-            }
-            break;
-        case EDIT:
-            if(source.declarationLine!=nil)
-            {
-                NSIndexPath *index = [self.declarationLineTable indexPathForSelectedRow];
-                [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
-                [self declarationLinesChanged];
-            }
-            else
-            {
-                [self.declaration.lines removeObjectAtIndex:[self.declarationLineTable indexPathForSelectedRow].row];
-                [self declarationLinesChanged];
-            }
-            break;
-            
-        default:
-            break;
+        NewDeclarationLineViewController * source = [segue sourceViewController];
+        switch (source.state)
+        {
+            case NEW:
+                if(source.declarationLine != nil)
+                {
+                    [self.declaration.lines addObject:source.declarationLine];
+                    [self declarationLinesChanged];
+                }
+                break;
+            case EDIT:
+                if(source.declarationLine!=nil)
+                {
+                    NSIndexPath *index = [self.declarationLineTable indexPathForSelectedRow];
+                    [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
+                    [self declarationLinesChanged];
+                }
+                else
+                {
+                    [self.declaration.lines removeObjectAtIndex:[self.declarationLineTable indexPathForSelectedRow].row];
+                    [self declarationLinesChanged];
+                }
+                break;
+                
+            default:
+                break;
+        }
     }
-    if(source.declarationLine != nil)
+    else if([[segue sourceViewController] isKindOfClass:[NewAttachmentViewController class]])
     {
-        [self.declaration.lines addObject:source.declarationLine];
-    }
-    if(source.attachment != nil)
-    {
-        [self.declaration.attachments addObject:source.attachment];
+        NewAttachmentViewController * source = [segue sourceViewController];
+        switch (source.state)
+        {
+            case NEW:
+                if(source.attachment != nil)
+                {
+                    [self.declaration.attachments addObject:source.attachment];
+                    [self attachmentsChanged];
+                }
+                break;
+            case EDIT:
+                if(source.attachment!=nil)
+                {
+                    NSIndexPath *index = [self.attachmentTable indexPathForSelectedRow];
+                    [self.declaration.attachments replaceObjectAtIndex:index.row withObject:source.attachment];
+                    [self attachmentsChanged];
+                }
+                else
+                {
+                    [self.declaration.attachments removeObjectAtIndex:[self.attachmentTable indexPathForSelectedRow].row];
+                    [self attachmentsChanged];
+                }
+                break;
+                
+            default:
+                break;
+        }
     }
 }
 
@@ -378,7 +406,15 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.declaration.lines count];
+    if(tableView == self.declarationLineTable)
+    {
+        return [self.declaration.lines count];
+    }
+    else if(tableView == self.attachmentTable)
+    {
+        return [self.declaration.attachments count];
+    }
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -392,27 +428,27 @@
     if(tableView == self.declarationLineTable)
     {
         static NSString *CellIdentifier = @"DeclarationLineCell";
-    
+        
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         if (cell == nil)
         {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
         }
-    
+        
         DeclarationLine *line = [self.declaration.lines objectAtIndex:indexPath.row];
-    
+        
         UILabel *label = (UILabel *)[cell viewWithTag:1];
         UILabel *subTypelabel = (UILabel *)[cell viewWithTag:2];
         NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
         formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
         NSDate *date = [formatter dateFromString:line.date];
-    
+        
         [formatter setDateFormat:@"dd-MM-yyyy"];
         NSString *dateString = [formatter stringFromDate:date];
-    
+        
         label.text = [NSString stringWithFormat:@"%@ - €%.02f", dateString, line.cost];
         subTypelabel.text = [NSString stringWithFormat:@"%@", line.subtype.subTypeName];
-
+        
         return cell;
     }
     
@@ -469,6 +505,7 @@
 {
     [self declarationLinesChanged];
     [self setTotalPrice];
+    [self attachmentsChanged];
     self.comment.text = self.declaration.comment;
 }
 
@@ -487,7 +524,7 @@
 {
     NSString* formattedAmount = [NSString stringWithFormat:@"%.2f", self.declaration.calculateTotalPrice];
     self.totalPrice.text = [NSString stringWithFormat:@"Totaal bedrag: €%@", formattedAmount];
-
+    
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -498,7 +535,7 @@
         
         NSIndexPath *index = [self.declarationLineTable indexPathForSelectedRow];
         destination.declarationLine = [self.declaration.lines objectAtIndex:index.row];
-
+        
         if(self.state == NEW)
         {
             destination.state = EDIT;
@@ -508,5 +545,22 @@
             destination.state = self.state;
         }
     }
+    if([[segue identifier] isEqualToString:@"viewAttachment"])
+    {
+        NewAttachmentViewController *destination = [segue destinationViewController];
+        
+        NSIndexPath *index = [self.attachmentTable indexPathForSelectedRow];
+        destination.attachment = [self.declaration.attachments objectAtIndex:index.row];
+        
+        if(self.state == NEW)
+        {
+            destination.state = EDIT;
+        }
+        else
+        {
+            destination.state = self.state;
+        }
+    }
+    
 }
 @end
