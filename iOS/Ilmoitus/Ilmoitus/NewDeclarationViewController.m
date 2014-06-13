@@ -18,7 +18,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
 @property (nonatomic) NSMutableArray *supervisorList;
 @property (weak, nonatomic) IBOutlet UITextView *comment;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UITableView *declarationLineTable;
+@property (weak, nonatomic) IBOutlet UITableView *attachmentTable;
 @property (nonatomic) UIPickerView * pktStatePicker;
 @property (nonatomic) UIToolbar *mypickerToolbar;
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
@@ -58,8 +59,8 @@
     self.supervisor.delegate = self;
     [self.comment setReturnKeyType: UIReturnKeyDone];
     self.comment.delegate = self;
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
+    self.declarationLineTable.delegate = self;
+    self.declarationLineTable.dataSource = self;
     
     [self getSupervisorList];
     
@@ -363,36 +364,68 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"DeclarationLineCell";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil)
+    UITableViewCell *cell = nil;
+    if(tableView == self.declarationLineTable)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        static NSString *CellIdentifier = @"DeclarationLineCell";
+    
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        }
+    
+        DeclarationLine *line = [self.declaration.lines objectAtIndex:indexPath.row];
+    
+        UILabel *label = (UILabel *)[cell viewWithTag:1];
+        UILabel *subTypelabel = (UILabel *)[cell viewWithTag:2];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
+        NSDate *date = [formatter dateFromString:line.date];
+    
+        [formatter setDateFormat:@"dd-MM-yyyy"];
+        NSString *dateString = [formatter stringFromDate:date];
+    
+        label.text = [NSString stringWithFormat:@"%@ - €%.02f", dateString, line.cost];
+        subTypelabel.text = [NSString stringWithFormat:@"%@", line.subtype.subTypeName];
+
+        return cell;
     }
     
-    DeclarationLine *line = [self.declaration.lines objectAtIndex:indexPath.row];
-    
-    UILabel *label = (UILabel *)[cell viewWithTag:1];
-    UILabel *subTypelabel = (UILabel *)[cell viewWithTag:2];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
-    NSDate *date = [formatter dateFromString:line.date];
-    
-    [formatter setDateFormat:@"dd-MM-yyyy"];
-    NSString *dateString = [formatter stringFromDate:date];
-    
-    label.text = [NSString stringWithFormat:@"%@ - €%.02f", dateString, line.cost];
-    subTypelabel.text = [NSString stringWithFormat:@"%@", line.subtype.subTypeName];
+    else if(tableView == self.attachmentTable)
+    {
+        static NSString *CellIdentifier = @"AttachmentCell";
+        
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        }
+        
+        Attachment *attachment = [self.declaration.attachments objectAtIndex:indexPath.row];
+        
+        UILabel *label = (UILabel *)[cell viewWithTag:1];
+        
+        label.text = attachment.name;
+        
+    }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.declaration.lines removeObjectAtIndex:indexPath.row];
+        if(tableView == self.declarationLineTable)
+        {
+            [self.declaration.lines removeObjectAtIndex:indexPath.row];
+            [self setTotalPrice];
+        }
+        else if(tableView == self.attachmentTable)
+        {
+            [self.declaration.attachments removeObjectAtIndex:indexPath.row];
+        }
+        
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        [self setTotalPrice];
     }
 }
 
@@ -415,9 +448,14 @@
     self.comment.text = self.declaration.comment;
 }
 
+-(void)attachmentsChanged
+{
+    [self.attachmentTable reloadData];
+}
+
 -(void)declarationLinesChanged
 {
-    [self.tableView reloadData];
+    [self.declarationLineTable reloadData];
     [self setTotalPrice];
 }
 
