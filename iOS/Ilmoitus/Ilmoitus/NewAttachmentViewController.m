@@ -153,6 +153,27 @@
     }
 }
 
+-(void)showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle message:errorMessage delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    
+    [alert show];
+}
+
+
+-(BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if(sender == self.add)
+    {
+        if(self.attachment.data == nil)
+        {
+            [self showErrorMessage:@"Geen bijlage" :@"Er is geen bijlage toegevoegd."];
+            return NO;
+        }
+    }
+    return YES;
+}
+
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
 

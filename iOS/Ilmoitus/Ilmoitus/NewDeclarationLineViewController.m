@@ -473,7 +473,7 @@
 }
 
 
-- (void) showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
+-(void) showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle
                                                     message:errorMessage

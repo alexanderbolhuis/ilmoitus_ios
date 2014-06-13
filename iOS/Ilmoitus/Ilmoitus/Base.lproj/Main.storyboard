@@ -348,7 +348,7 @@
                                     <action selector="addAttachment:" destination="mBs-bY-uWa" eventType="touchUpInside" id="uYR-5i-nz4"/>
                                 </connections>
                             </button>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wme-Ri-NON">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wme-Ri-NON">
                                 <rect key="frame" x="20" y="131" width="280" height="322"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <rect key="contentStretch" x="0.0" y="0.0" width="0.0" height="0.0"/>
@@ -383,8 +383,10 @@
                         <constraints>
                             <constraint firstItem="GyA-XH-RC8" firstAttribute="top" secondItem="wme-Ri-NON" secondAttribute="bottom" constant="66" id="4ha-Pd-Cv6"/>
                             <constraint firstItem="GyA-XH-RC8" firstAttribute="top" secondItem="jT3-9J-AVe" secondAttribute="bottom" constant="20" id="7lm-To-29O"/>
+                            <constraint firstAttribute="trailing" secondItem="wme-Ri-NON" secondAttribute="trailing" constant="20" id="QPW-94-Ui4"/>
                             <constraint firstItem="wme-Ri-NON" firstAttribute="top" secondItem="MQv-dw-tWL" secondAttribute="bottom" constant="67" id="a9l-bz-Glc"/>
                             <constraint firstItem="aCn-9d-2xc" firstAttribute="top" secondItem="MQv-dw-tWL" secondAttribute="bottom" constant="18" id="jf5-Lr-fnV"/>
+                            <constraint firstItem="wme-Ri-NON" firstAttribute="leading" secondItem="aaa-k4-i74" secondAttribute="leading" constant="20" id="k5U-OT-yQh"/>
                             <constraint firstItem="GyA-XH-RC8" firstAttribute="top" secondItem="oAn-ZP-twK" secondAttribute="bottom" constant="20" id="kvR-3b-IHk"/>
                         </constraints>
                     </view>
