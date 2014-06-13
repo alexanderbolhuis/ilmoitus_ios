@@ -39,7 +39,6 @@
 {
     [super viewDidAppear:animated];
     self.tabBarController.tabBar.hidden = YES;
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated

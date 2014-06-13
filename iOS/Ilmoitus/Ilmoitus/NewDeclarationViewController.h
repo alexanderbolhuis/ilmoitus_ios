@@ -8,15 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "Declaration.h"
+#import "StateType.h"
 
 @interface NewDeclarationViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 @property Declaration *declaration;
-@property Boolean edit;
-
-
-typedef enum {
-    EDIT,
-    VIEW,
-    NEW
-} StateType;
+@property (nonatomic) StateType state;
 @end
