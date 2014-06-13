@@ -184,6 +184,7 @@
             
             DeclarationSubType *declarationSubType = [[DeclarationSubType alloc]init];
             NSDictionary *declarationSubTypeDict = line[@"declaration_sub_type"];
+            declarationSubType.ident = [line[@"id"] longLongValue];
             declarationSubType.subTypeName = declarationSubTypeDict[@"name"];
             foundLine.subtype = declarationSubType;
             

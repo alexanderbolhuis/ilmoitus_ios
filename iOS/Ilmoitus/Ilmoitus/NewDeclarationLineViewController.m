@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *commentField;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttonCollection;
 @property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *inputCollection;
+
 @property (nonatomic) UIDatePicker *datePicker;
 @property (nonatomic) UIPickerView *typePicker;
 @property (nonatomic) UIPickerView *subTypePicker;
@@ -133,9 +134,9 @@
         self.dateField.text = [dateFormat stringFromDate:date];
         self.commentField.text = self.declarationLine.description;
         int intCost = floorf(self.declarationLine.cost);
-        int decimal = floorf(((self.declarationLine.cost - intCost)*100));
+        int decimal = roundf(((self.declarationLine.cost - intCost)*100));
         self.costField.text = [NSString stringWithFormat:@"%d", intCost];
-        self.costDecimalField.text = [NSString stringWithFormat:@"%d", decimal];
+        self.costDecimalField.text = [NSString stringWithFormat:@"%02d", decimal];
         self.typeField.text = self.declarationLine.type.mainTypeName;
         self.subtypeField.text = self.declarationLine.subtype.subTypeName;
     }
@@ -161,12 +162,14 @@
     [self setupImagePicker];
     [self setupInputFields];
     [self setupPickers];
+    self.add.titleLabel.text = @"Toevoegen";
     self.title = @"declaratie regel maken";
 }
 
 -(void)setModusEdit
 {
     [self setModusNew];
+    self.add.titleLabel.text = @"Updaten";
     self.title = @"declaratie regel aanpassen";
 }
 
@@ -437,6 +440,7 @@
     int selected = [self.typePicker selectedRowInComponent:0];
     DeclarationType *type = [self.typeList objectAtIndex:selected];
     self.typeField.text = type.mainTypeName;
+    self.declarationLine.type = type;
     [self downLoadSubTypes:type.ident];
     [self.pickerViewPopup dismissWithClickedButtonIndex:1 animated:YES];
 }

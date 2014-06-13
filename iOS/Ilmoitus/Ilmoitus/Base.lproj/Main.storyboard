@@ -317,10 +317,11 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UB6-fV-eud">
-                                <rect key="frame" x="20" y="399" width="87" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="clip" translatesAutoresizingMaskIntoConstraints="NO" id="UB6-fV-eud">
+                                <rect key="frame" x="20" y="399" width="125" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.79627710460000001" green="0.1830966987" blue="0.24070477949999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <state key="normal" title="Toevoegen">
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
@@ -329,9 +330,10 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="21T-yN-64p">
-                                <rect key="frame" x="210" y="399" width="90" height="30"/>
+                                <rect key="frame" x="175" y="399" width="125" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.79627710460000001" green="0.1830966987" blue="0.24070477949999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <state key="normal" title="Annuleren">
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -369,8 +371,8 @@
                     </view>
                     <navigationItem key="navigationItem" id="cl6-ON-0SQ"/>
                     <connections>
-                        <outlet property="add" destination="UB6-fV-eud" id="UgQ-vZ-hp5"/>
-                        <outlet property="cancel" destination="21T-yN-64p" id="jOw-Rn-zrx"/>
+                        <outlet property="add" destination="UB6-fV-eud" id="WMI-zW-S8x"/>
+                        <outlet property="cancel" destination="21T-yN-64p" id="Vn1-V5-eDt"/>
                         <outlet property="commentField" destination="3GG-yi-XpK" id="Qgs-Qh-YFR"/>
                         <outlet property="costDecimalField" destination="AyY-DZ-cqt" id="3Oj-2W-39V"/>
                         <outlet property="costField" destination="xnQ-CK-c77" id="gwY-PK-Fdl"/>

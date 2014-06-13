@@ -154,10 +154,35 @@
 -(IBAction)unwindToNewDeclaration:(UIStoryboardSegue *)segue
 {
     NewDeclarationLineViewController * source = [segue sourceViewController];
+    switch (source.state)
+    {
+        case NEW:
+            if(source.declarationLine != nil)
+            {
+                [self.declaration.lines addObject:source.declarationLine];
+                [self declarationLinesChanged];
+            }
+            break;
+        case EDIT:
+            if(source.declarationLine!=nil)
+            {
+                NSIndexPath *index = [self.tableView indexPathForSelectedRow];
+                [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
+                [self declarationLinesChanged];
+            }
+            else
+            {
+                [self.declaration.lines removeObjectAtIndex:[self.tableView indexPathForSelectedRow].row];
+                [self declarationLinesChanged];
+            }
+            break;
+            
+        default:
+            break;
+    }
     if(source.declarationLine != nil)
     {
         [self.declaration.lines addObject:source.declarationLine];
-        [self declarationLinesChanged];
     }
     if(source.attachment != nil)
     {
