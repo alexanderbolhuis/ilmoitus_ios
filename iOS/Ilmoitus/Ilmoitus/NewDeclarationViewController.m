@@ -461,7 +461,14 @@
         NSIndexPath *index = [self.tableView indexPathForSelectedRow];
         destination.declarationLine = [self.declaration.lines objectAtIndex:index.row];
 
-        destination.state = self.state;
+        if(self.state == NEW)
+        {
+            destination.state = EDIT;
+        }
+        else
+        {
+            destination.state = self.state;
+        }
     }
 }
 @end

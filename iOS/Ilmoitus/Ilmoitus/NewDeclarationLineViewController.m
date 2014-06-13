@@ -139,6 +139,7 @@
         self.costDecimalField.text = [NSString stringWithFormat:@"%02d", decimal];
         self.typeField.text = self.declarationLine.type.mainTypeName;
         self.subtypeField.text = self.declarationLine.subtype.subTypeName;
+        [self downLoadSubTypes:self.declarationLine.type.ident];
     }
 }
 
@@ -466,75 +467,81 @@
 
 - (void)downLoadMainTypes
 {
-    NSMutableArray *declarationsTypesFound = [[NSMutableArray alloc] init];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
-    NSString *url = [NSString stringWithFormat:@"%@/declarationtypes", baseURL];
-    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSError* error;
-         NSDictionary* json = [NSJSONSerialization
-                               JSONObjectWithData:responseObject
-                               
-                               options:kNilOptions
-                               error:&error];
-         for (NSDictionary *decl in json)
+    if(self.state!=VIEW)
+    {
+        NSMutableArray *declarationsTypesFound = [[NSMutableArray alloc] init];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+        NSString *url = [NSString stringWithFormat:@"%@/declarationtypes", baseURL];
+        [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
          {
-             DeclarationType *declarationType = [[DeclarationType alloc] init];
-             declarationType.ident = [decl[@"id"] longLongValue];
-             declarationType.mainTypeName = decl[@"name"];
-             [declarationsTypesFound addObject:declarationType];
+             NSError* error;
+             NSDictionary* json = [NSJSONSerialization
+                                   JSONObjectWithData:responseObject
+                                   
+                                   options:kNilOptions
+                                   error:&error];
+             for (NSDictionary *decl in json)
+             {
+                 DeclarationType *declarationType = [[DeclarationType alloc] init];
+                 declarationType.ident = [decl[@"id"] longLongValue];
+                 declarationType.mainTypeName = decl[@"name"];
+                 [declarationsTypesFound addObject:declarationType];
+             }
+             
+             NSLog(@"GET request success response for all declarations: %@", json);
+             self.typeList = declarationsTypesFound;
+             [self.typePicker reloadAllComponents];
          }
-         
-         NSLog(@"GET request success response for all declarations: %@", json);
-         self.typeList = declarationsTypesFound;
-         [self.typePicker reloadAllComponents];
-     }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error)
-     {
-         NSLog(@"GET request Error for all declarations main types: %@", error);
-     }];
+             failure:^(AFHTTPRequestOperation *operation, NSError *error)
+         {
+             NSLog(@"GET request Error for all declarations main types: %@", error);
+         }];
+    }
 }
 
 - (void)downLoadSubTypes:(int64_t)mainTpyeId
 {
-    NSString *combinedURL = [NSString stringWithFormat:@"%@%@%lld", baseURL, @"/declarationtype/", mainTpyeId];
-    NSMutableArray *declarationsSubTypesFound = [[NSMutableArray alloc] init];
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
-    [manager GET:combinedURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSError* error;
-         NSDictionary* json = [NSJSONSerialization
-                               JSONObjectWithData:responseObject
-                               
-                               options:kNilOptions
-                               error:&error];
-         
-         
-         for (NSDictionary *decl in json)
+    if(self.state != VIEW)
+    {
+        NSString *combinedURL = [NSString stringWithFormat:@"%@%@%lld", baseURL, @"/declarationtype/", mainTpyeId];
+        NSMutableArray *declarationsSubTypesFound = [[NSMutableArray alloc] init];
+        
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+        [manager GET:combinedURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
          {
-             DeclarationSubType *declarationSubType = [[DeclarationSubType alloc] init];
-             declarationSubType.ident = [decl[@"id"] longLongValue];
-             declarationSubType.subTypeName = decl[@"name"];
-             declarationSubType.subTypeDescription = decl[@"declarationType"];
-             declarationSubType.subTypeMaxCost = [decl[@"max_cost"] floatValue];
-             [declarationsSubTypesFound addObject:declarationSubType];
+             NSError* error;
+             NSDictionary* json = [NSJSONSerialization
+                                   JSONObjectWithData:responseObject
+                                   
+                                   options:kNilOptions
+                                   error:&error];
+             
+             
+             for (NSDictionary *decl in json)
+             {
+                 DeclarationSubType *declarationSubType = [[DeclarationSubType alloc] init];
+                 declarationSubType.ident = [decl[@"id"] longLongValue];
+                 declarationSubType.subTypeName = decl[@"name"];
+                 declarationSubType.subTypeDescription = decl[@"declarationType"];
+                 declarationSubType.subTypeMaxCost = [decl[@"max_cost"] floatValue];
+                 [declarationsSubTypesFound addObject:declarationSubType];
+             }
+             
+             NSLog(@"GET request success response for all declarations sub types: %@", json);
+             self.subTypeList = declarationsSubTypesFound;
+             [self.subTypePicker reloadAllComponents];
          }
-         
-         NSLog(@"GET request success response for all declarations sub types: %@", json);
-         self.subTypeList = declarationsSubTypesFound;
-         [self.subTypePicker reloadAllComponents];
-     }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error)
-     {
-         NSLog(@"GET request Error for all declarations: %@", error);
-     }];
+             failure:^(AFHTTPRequestOperation *operation, NSError *error)
+         {
+             NSLog(@"GET request Error for all declarations: %@", error);
+         }];
+    }
 }
 
 
