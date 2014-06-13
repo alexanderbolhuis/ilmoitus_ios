@@ -463,10 +463,10 @@
             </objects>
             <point key="canvasLocation" x="643" y="1185"/>
         </scene>
-        <!--Login View Controller - Logout-->
+        <!--Login View Controller - Log uit-->
         <scene sceneID="nsb-69-OZG">
             <objects>
-                <viewController storyboardIdentifier="Login" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fuc-rh-cuB" customClass="LoginViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Login" title="Log uit" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fuc-rh-cuB" customClass="LoginViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="mth-Kp-bwX"/>
                         <viewControllerLayoutGuide type="bottom" id="16P-mQ-cMD"/>
@@ -513,7 +513,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Logout" id="mpn-na-9zk"/>
+                    <tabBarItem key="tabBarItem" title="Log uit" id="mpn-na-9zk"/>
                     <connections>
                         <outlet property="passwordfield" destination="fkC-G8-dVK" id="NpK-qB-u18"/>
                         <outlet property="usernamefield" destination="67v-fJ-lNf" id="kMY-Q4-oWV"/>
@@ -539,6 +539,7 @@
                         <segue destination="rNo-qa-H3S" kind="relationship" relationship="viewControllers" id="e9j-Ia-Du9"/>
                         <segue destination="QUy-BD-bpt" kind="relationship" relationship="viewControllers" id="M8t-EP-wfW"/>
                         <segue destination="odh-cg-huu" kind="relationship" relationship="viewControllers" id="Ou2-ld-fG2"/>
+                        <segue destination="Fuc-rh-cuB" kind="relationship" relationship="viewControllers" id="WvT-G2-wvh"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FNP-y4-bzi" sceneMemberID="firstResponder"/>
@@ -555,6 +556,6 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="yej-Hd-Opz"/>
+        <segue reference="M8t-EP-wfW"/>
     </inferredMetricsTieBreakers>
 </document>
