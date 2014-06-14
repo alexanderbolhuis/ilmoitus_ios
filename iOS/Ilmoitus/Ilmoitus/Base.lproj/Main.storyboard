@@ -226,8 +226,6 @@
                         <outlet property="regelsLabel" destination="eFd-7k-DoI" id="SKy-zz-Cun"/>
                         <outlet property="supervisor" destination="9Gg-Je-QYX" id="pms-d6-A5z"/>
                         <outlet property="totalPrice" destination="Yfp-PE-Aqn" id="icM-61-76t"/>
-                        <outletCollection property="buttons" destination="hbl-Nf-RY0" id="8In-PG-MLV"/>
-                        <outletCollection property="buttons" destination="4PO-Vp-36H" id="1lk-iX-hIH"/>
                         <outletCollection property="buttons" destination="tRX-PM-77D" id="pfV-xo-gVw"/>
                         <outletCollection property="buttons" destination="QeA-Fl-gNj" id="HWc-1I-Ide"/>
                     </connections>

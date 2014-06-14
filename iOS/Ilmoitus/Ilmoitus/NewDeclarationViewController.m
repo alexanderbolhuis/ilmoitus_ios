@@ -81,7 +81,10 @@
         [self.navigationItem setTitle:@"Declaratie bekijken"];
         self.supervisor.enabled = NO;
         self.comment.editable = NO;
-        
+        for (UIButton *button in self.buttons)
+        {
+            button.hidden = YES;
+        }
     }
     
     self.comment.text = self.declaration.comment;
