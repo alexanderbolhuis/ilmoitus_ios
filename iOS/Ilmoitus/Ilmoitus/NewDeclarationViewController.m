@@ -13,6 +13,7 @@
 #import "Supervisor.h"
 #import "constants.h"
 #import "Attachment.h"
+#import "StateType.h"
 
 @interface NewDeclarationViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
@@ -22,9 +23,7 @@
 @property (nonatomic) UIPickerView * pktStatePicker;
 @property (nonatomic) UIToolbar *mypickerToolbar;
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
-@property (weak, nonatomic) IBOutlet UILabel *navItem;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
-@property (nonatomic) StateType state;
 
 @end
 
@@ -64,15 +63,15 @@
     [self getSupervisorList];
     
     if (_declaration == nil) {
-        self.navItem.text = @"Declaratie Aanmaken";
+        self.title = @"Declaratie Aanmaken";
     }
-    else if(self.edit)
+    else if(self.state == EDIT)
     {
-        self.navItem.text = @"Declaratie Aanpassen";
+        self.title = @"Declaratie Aanpassen";
     }
     else
     {
-        self.navItem.text = @"Declaratie Bekijken";
+        self.title = @"Declaratie Bekijken";
         for (UIButton *button in self.buttons)
         {
             button.hidden = YES;
@@ -155,10 +154,35 @@
 -(IBAction)unwindToNewDeclaration:(UIStoryboardSegue *)segue
 {
     NewDeclarationLineViewController * source = [segue sourceViewController];
+    switch (source.state)
+    {
+        case NEW:
+            if(source.declarationLine != nil)
+            {
+                [self.declaration.lines addObject:source.declarationLine];
+                [self declarationLinesChanged];
+            }
+            break;
+        case EDIT:
+            if(source.declarationLine!=nil)
+            {
+                NSIndexPath *index = [self.tableView indexPathForSelectedRow];
+                [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
+                [self declarationLinesChanged];
+            }
+            else
+            {
+                [self.declaration.lines removeObjectAtIndex:[self.tableView indexPathForSelectedRow].row];
+                [self declarationLinesChanged];
+            }
+            break;
+            
+        default:
+            break;
+    }
     if(source.declarationLine != nil)
     {
         [self.declaration.lines addObject:source.declarationLine];
-        [self declarationLinesChanged];
     }
     if(source.attachment != nil)
     {
@@ -399,7 +423,7 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return self.edit;
+    return self.state != VIEW;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
@@ -426,5 +450,25 @@
     NSString* formattedAmount = [NSString stringWithFormat:@"%.2f", self.declaration.calculateTotalPrice];
     self.totalPrice.text = [NSString stringWithFormat:@"Totaal bedrag: €%@", formattedAmount];
 
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([[segue identifier] isEqualToString:@"viewLine"])
+    {
+        NewDeclarationLineViewController *destination = [segue destinationViewController];
+        
+        NSIndexPath *index = [self.tableView indexPathForSelectedRow];
+        destination.declarationLine = [self.declaration.lines objectAtIndex:index.row];
+
+        if(self.state == NEW)
+        {
+            destination.state = EDIT;
+        }
+        else
+        {
+            destination.state = self.state;
+        }
+    }
 }
 @end
