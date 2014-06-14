@@ -196,7 +196,7 @@
         
         destination.attachment = nil;
         
-        destination.state = self.state;
+        destination.state = NEW;
     }
 }
 @end

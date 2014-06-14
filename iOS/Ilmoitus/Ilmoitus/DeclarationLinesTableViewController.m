@@ -185,7 +185,7 @@
         
         destination.declarationLine = nil;
         
-        destination.state = self.state;
+        destination.state = NEW;
     }
 }
 @end
