@@ -325,6 +325,85 @@
     [apiRequest start];
 }
 
+-(void)deleteDeclaration
+{
+    // Do Request
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, self.declaration.ident];
+    [manager DELETE:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError* error;
+        NSDictionary* json = [NSJSONSerialization
+                              JSONObjectWithData:responseObject
+                              
+                              options:kNilOptions
+                              error:&error];
+        
+        // TODO Navigate back to MyDeclarationView if succesfully deleted
+        
+        // NSLog(@"JSON response: %@", json);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error while getting supervisor list: %@", error);
+    }];
+}
+
+-(void)editDeclaration
+{
+    Declaration *decl = self.declaration;
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
+    // Lines
+    NSMutableArray *declarationlines = [[NSMutableArray alloc] init];
+    for (DeclarationLine *line in decl.lines)
+    {
+        NSDictionary *currentline = @{@"receipt_date": line.date, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
+        [declarationlines addObject:currentline];
+    }
+    
+    // Attachments
+    NSMutableArray *attachments = [[NSMutableArray alloc] init];
+    for (Attachment *attachment in self.declaration.attachments)
+    {
+        NSDictionary *currentAttachment = @{@"name":attachment.name, @"file":attachment.data};
+        [attachments addObject:currentAttachment];
+    }
+    
+    // Declaration
+    NSDictionary *declaration = @{@"state":decl.status, @"created_by":[NSNumber numberWithLongLong:decl.createdBy], @"supervisor":[decl.assignedTo firstObject], @"comment":decl.comment, @"items_total_price":[NSNumber numberWithFloat:decl.itemsTotalPrice], @"items_count":[NSNumber numberWithInt:decl.itemsCount], @"lines":declarationlines, @"attachments":attachments};
+    
+    
+    // Total dict
+    NSDictionary *params = @{@"declaration":declaration};
+    
+    // NSLog(@"JSON data that is going to be saved/sent: %@",params);
+    
+    NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, self.declaration.ident];
+    AFHTTPRequestOperation *apiRequest = [manager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError* error;
+        NSDictionary* json = [NSJSONSerialization
+                              JSONObjectWithData:responseObject
+                              
+                              options:kNilOptions
+                              error:&error];
+
+        // TODO Navigate back to MyDeclarationView if succesfully edited
+        
+        // NSLog(@"JSON response data for saving declaration: %@",json);
+        // Handle success
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
+        // Handle error
+        
+    }];
+    
+    [apiRequest start];
+}
+
 -(void)getSupervisorList
 {
     // Do Request
