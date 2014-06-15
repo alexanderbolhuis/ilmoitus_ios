@@ -343,7 +343,7 @@
         
         // TODO Navigate back to MyDeclarationView if succesfully deleted
         
-        NSLog(@"JSON response: %@", json);
+        // NSLog(@"JSON response: %@", json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting supervisor list: %@", error);
     }];
@@ -380,7 +380,7 @@
     // Total dict
     NSDictionary *params = @{@"declaration":declaration};
     
-    NSLog(@"JSON data that is going to be saved/sent: %@",params);
+    // NSLog(@"JSON data that is going to be saved/sent: %@",params);
     
     NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, self.declaration.ident];
     AFHTTPRequestOperation *apiRequest = [manager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -393,7 +393,7 @@
 
         // TODO Navigate back to MyDeclarationView if succesfully edited
         
-        NSLog(@"JSON response data for saving declaration: %@",json);
+        // NSLog(@"JSON response data for saving declaration: %@",json);
         // Handle success
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
