@@ -10,9 +10,9 @@
 #define Ilmoitus_StateType_h
 
 typedef enum {
+    NEW,
     EDIT,
-    VIEW,
-    NEW
+    VIEW
 } StateType;
 
 #endif

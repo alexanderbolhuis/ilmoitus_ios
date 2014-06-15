@@ -40,73 +40,9 @@
 
 @implementation NewDeclarationLineViewController
 
--(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    switch (buttonIndex) {
-        case 0:
-            [self addAttachmentFromPhotoLibrary];
-            break;
-        case 1:
-            [self addAttachmentFromCamera];
-            break;
-        default:
-            break;
-    }
-}
-
-- (IBAction)addAttachment:(id)sender {
-    [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Close" destructiveButtonTitle:nil otherButtonTitles:@"Choose existing", @"Create new",  nil]showInView:self.view];
-}
-
--(void)addAttachmentFromPhotoLibrary
-{
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary])
-    {
-        imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-        [self presentImagePicker];
-    }
-    else
-    {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Photo Library is not available" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil];
-        [alert show];
-    }
-}
-
--(void)addAttachmentFromCamera
-{
-    if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-    {
-        imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
-        [self presentImagePicker];
-    }
-    else
-    {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Camera is not available" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil];
-        [alert show];
-    }
-}
-
--(void)presentImagePicker
-{
-    [self presentViewController:imagePicker animated:YES completion:nil];
-}
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
-}
-
--(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    NSURL *imageURL = (NSURL *)[info valueForKey:UIImagePickerControllerReferenceURL];
-    
-    UIImage *image = (UIImage *)[info valueForKey:UIImagePickerControllerOriginalImage];
-    
-    self.attachment = [[Attachment alloc]init];
-    [self.attachment SetAttachmentDataFromImage:image];
-    self.attachment.name = [imageURL path];
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)reloadLineData
@@ -160,7 +96,6 @@
 
 -(void)setModusNew
 {
-    [self setupImagePicker];
     [self setupInputFields];
     [self setupPickers];
     self.add.titleLabel.text = @"Toevoegen";
@@ -190,12 +125,6 @@
     {
         input.enabled = false;
     }
-}
-
--(void)setupImagePicker
-{
-    imagePicker = [[UIImagePickerController alloc]init];
-    imagePicker.delegate = self;
 }
 
 -(void)setupPickers
@@ -324,7 +253,6 @@
     else if (sender == self.cancel)
     {
         self.declarationLine = nil;
-        self.attachment = nil;
     }
 }
 

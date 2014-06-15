@@ -210,8 +210,6 @@
             [attachments addObject:foundAtt];
         }
         dec.attachments = attachments;
-
-        
         
         destination.declaration = dec;
         NSLog(@"GET request SUCCES for specific declaration: %@", json);

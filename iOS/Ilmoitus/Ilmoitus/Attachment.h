@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 
 @interface Attachment : NSObject
+
 @property (nonatomic) int64_t ident;
+@property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) NSString *data;
 @property (nonatomic, strong) NSString *name;
 
--(void)setAttachmentData:(NSObject *)dataObject;
+-(NSString *)setAttachmentData:(NSObject *)dataObject;
 
--(void)SetAttachmentDataFromImage:(UIImage *)image;
+-(NSString *)SetAttachmentDataFromImage:(UIImage *)image;
 
 @end
