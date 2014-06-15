@@ -46,6 +46,7 @@
 		46D94ED419063D12008E6C01 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED319063D12008E6C01 /* SettingsViewController.m */; };
 		46D94ED719063EA2008E6C01 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED619063EA2008E6C01 /* LoginViewController.m */; };
 		46D94EDA19063F82008E6C01 /* DeclarationDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED919063F82008E6C01 /* DeclarationDetailViewController.m */; };
+		8423C633194DE71E00C44085 /* HttpRequestOperationManagerHandeler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8423C632194DE71E00C44085 /* HttpRequestOperationManagerHandeler.m */; };
 		84BE5846192F54A800ECE63A /* DeclarationTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE5845192F54A800ECE63A /* DeclarationTypeController.m */; };
 		84BE584C192F7EF700ECE63A /* DeclarationType.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE584B192F7EF700ECE63A /* DeclarationType.m */; };
 		84BE584F192F7F0D00ECE63A /* DeclarationSubType.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE584E192F7F0D00ECE63A /* DeclarationSubType.m */; };
@@ -135,6 +136,8 @@
 		46D94ED619063EA2008E6C01 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		46D94ED819063F82008E6C01 /* DeclarationDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationDetailViewController.h; sourceTree = "<group>"; };
 		46D94ED919063F82008E6C01 /* DeclarationDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeclarationDetailViewController.m; sourceTree = "<group>"; };
+		8423C631194DE71E00C44085 /* HttpRequestOperationManagerHandeler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HttpRequestOperationManagerHandeler.h; sourceTree = "<group>"; };
+		8423C632194DE71E00C44085 /* HttpRequestOperationManagerHandeler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HttpRequestOperationManagerHandeler.m; sourceTree = "<group>"; };
 		84BE5844192F54A800ECE63A /* DeclarationTypeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationTypeController.h; sourceTree = "<group>"; };
 		84BE5845192F54A800ECE63A /* DeclarationTypeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeclarationTypeController.m; sourceTree = "<group>"; };
 		84BE584A192F7EF700ECE63A /* DeclarationType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationType.h; sourceTree = "<group>"; };
@@ -271,6 +274,8 @@
 		46D94EA019063A08008E6C01 /* Ilmoitus */ = {
 			isa = PBXGroup;
 			children = (
+				8423C631194DE71E00C44085 /* HttpRequestOperationManagerHandeler.h */,
+				8423C632194DE71E00C44085 /* HttpRequestOperationManagerHandeler.m */,
 				463019C81917D1D0004D2613 /* AFNetworking */,
 				463019DC1917D1D0004D2613 /* UIKit+AFNetworking */,
 				46850DB21906A7E800498B6F /* Models */,
@@ -426,6 +431,7 @@
 			files = (
 				4666E4FD192A476900B6AC3F /* NewDeclarationLineViewController.m in Sources */,
 				463019F21917D1D1004D2613 /* AFSecurityPolicy.m in Sources */,
+				8423C633194DE71E00C44085 /* HttpRequestOperationManagerHandeler.m in Sources */,
 				46D94EB419063A08008E6C01 /* NewDeclarationViewController.m in Sources */,
 				463019F11917D1D1004D2613 /* AFNetworkReachabilityManager.m in Sources */,
 				46D94EAB19063A08008E6C01 /* AppDelegate.m in Sources */,
