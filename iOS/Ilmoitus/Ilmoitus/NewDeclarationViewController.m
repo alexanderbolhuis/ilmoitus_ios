@@ -230,28 +230,11 @@
                                    parameters:nil
                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                           NSLog(@"successful download to %@", path);
-                                          [self openAttachmentFile:att.name];
-                                          
                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                           NSLog(@"Error: %@", error);
                                       }];
     [op setResponseSerializer:[AFHTTPResponseSerializer serializer]];
     op.outputStream = [NSOutputStream outputStreamToFileAtPath:path append:NO];
-}
-
--(void)openAttachmentFile:(NSString *)filename
-{
-    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
-    self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:path]];
-    
-    // Configure Document Interaction Controller
-    [self.documentInteractionController setDelegate:self];
-    
-    [self.documentInteractionController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
-}
-
-- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller{
-    return self;
 }
 
 -(void)textFieldDidChange
@@ -594,6 +577,7 @@
         else
         {
             destination.state = self.state;
+            [self downloadAttachment:destination.attachment];
         }
     }
     

@@ -10,14 +10,14 @@
 #import "Attachment.h"
 #import "StateType.h"
 
-@interface NewAttachmentViewController : UIViewController< UINavigationControllerDelegate, UIImagePickerControllerDelegate>
+@interface NewAttachmentViewController : UIViewController< UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIPickerViewDataSource, UIDocumentInteractionControllerDelegate>
 {
     UIImagePickerController *imagePicker;
 }
 
 @property (nonatomic) StateType state;
 @property Attachment *attachment;
-
+@property UIDocumentInteractionController *documentInteractionController;
 -(void)setModus:(StateType)state;
 
 @end

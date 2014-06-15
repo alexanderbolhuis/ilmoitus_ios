@@ -10,8 +10,7 @@
 #import "Declaration.h"
 #import "StateType.h"
 
-@interface NewDeclarationViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource, UIDocumentInteractionControllerDelegate>
+@interface NewDeclarationViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UITableViewDataSource, UITableViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 @property Declaration *declaration;
 @property (nonatomic) StateType state;
-@property UIDocumentInteractionController *documentInteractionController;
 @end
