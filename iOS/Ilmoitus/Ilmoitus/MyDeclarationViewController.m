@@ -10,6 +10,7 @@
 #import "NewDeclarationViewController.h"
 #import "Declaration.h"
 #import "DeclarationLine.h"
+#import "Attachment.h"
 #import "constants.h"
 
 @interface MyDeclarationViewController ()
@@ -199,8 +200,16 @@
         }
         dec.lines = lines;
         
-        //TODO Attachments ophalen
-        
+        NSMutableArray *attachments = [[NSMutableArray alloc] init];
+        for (NSDictionary *attachment in json[@"attachments"])
+        {
+            Attachment *foundAtt = [[Attachment alloc]init];
+            foundAtt.ident = [attachment[@"id"] longLongValue];
+            foundAtt.name = attachment[@"name"];
+            
+            [attachments addObject:foundAtt];
+        }
+        dec.attachments = attachments;
 
         
         

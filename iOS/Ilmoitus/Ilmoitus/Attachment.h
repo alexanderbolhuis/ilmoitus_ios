@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface Attachment : NSObject
-
+@property (nonatomic) int64_t ident;
 @property (nonatomic, strong) NSString *data;
 @property (nonatomic, strong) NSString *name;
 

@@ -76,12 +76,12 @@
         {
             button.hidden = YES;
         }
-
+        
     }
-
+    
     [self declarationLinesChanged];
     self.comment.text = self.declaration.comment;
-
+    
     
     // Textfield delegates
     self.supervisor.delegate = self;
@@ -95,9 +95,9 @@
     self.comment.clipsToBounds = YES;
     
     [self.supervisor addTarget:self
-                    action:@selector(textFieldDidChange)
-          forControlEvents:UIControlEventEditingChanged];
-
+                        action:@selector(textFieldDidChange)
+              forControlEvents:UIControlEventEditingChanged];
+    
     [self createSupervisorPicker];
 }
 
@@ -188,6 +188,41 @@
     {
         [self.declaration.attachments addObject:source.attachment];
     }
+}
+
+-(void)downloadAttachment:(Attachment *)att
+{
+    // TODO switch to token based GET
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:att.name];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSString *url = [NSString stringWithFormat:@"%@/attachment/%lld", @"http://5.sns-ilmoitus.appspot.com", att.ident];
+    AFHTTPRequestOperation *op = [manager GET:url
+                                   parameters:nil
+                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                          NSLog(@"successful download to %@", path);
+                                          [self openAttachmentFile:att.name];
+                                          
+                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                          NSLog(@"Error: %@", error);
+                                      }];
+    [op setResponseSerializer:[AFHTTPResponseSerializer serializer]];
+    op.outputStream = [NSOutputStream outputStreamToFileAtPath:path append:NO];
+}
+
+-(void)openAttachmentFile:(NSString *)filename
+{
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
+    self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:path]];
+    
+    // Configure Document Interaction Controller
+    [self.documentInteractionController setDelegate:self];
+    
+    [self.documentInteractionController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
+}
+
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller{
+    return self;
 }
 
 -(void)textFieldDidChange
@@ -449,7 +484,7 @@
 {
     NSString* formattedAmount = [NSString stringWithFormat:@"%.2f", self.declaration.calculateTotalPrice];
     self.totalPrice.text = [NSString stringWithFormat:@"Totaal bedrag: €%@", formattedAmount];
-
+    
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -460,7 +495,7 @@
         
         NSIndexPath *index = [self.tableView indexPathForSelectedRow];
         destination.declarationLine = [self.declaration.lines objectAtIndex:index.row];
-
+        
         if(self.state == NEW)
         {
             destination.state = EDIT;
