@@ -473,12 +473,18 @@
         float maxCost = self.declarationLine.subtype.subTypeMaxCost;
         float selectedCost = [self.costField.text intValue] + ([self.costDecimalField.text intValue]/100);
         
-        if (maxCost < selectedCost) {
-            NSString *errorString = [NSString stringWithFormat:@"De maximum kosten voor dit type zijn %0.2f", maxCost];
-            [self showErrorMessage:@"Maximum kosten" :errorString];
-            self.costField.text = @"";
-            self.costDecimalField.text = @"";
+        if(selectedCost != 0.00){
+            
+            if (maxCost < selectedCost) {
+                NSString *errorString = [NSString stringWithFormat:@"De maximum kosten voor dit type zijn %0.2f", maxCost];
+                [self showErrorMessage:@"Maximum kosten" :errorString];
+                self.costField.text = @"";
+                self.costDecimalField.text = @"";
+            }
+        } else {
+            [self showErrorMessage:@"Ongeldig bedrag" :@"Het ingevoerde bedrag is ongeldig"];
         }
+        
     }
 }
 
