@@ -415,7 +415,7 @@
             </objects>
             <point key="canvasLocation" x="577" y="1165"/>
         </scene>
-        <!--Login View Controller - Logout-->
+        <!--Login View Controller - Log uit-->
         <scene sceneID="nsb-69-OZG">
             <objects>
                 <viewController storyboardIdentifier="Login" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fuc-rh-cuB" customClass="LoginViewController" sceneMemberID="viewController">
@@ -465,7 +465,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Logout" id="mpn-na-9zk"/>
+                    <tabBarItem key="tabBarItem" title="Log uit" id="mpn-na-9zk"/>
                     <connections>
                         <outlet property="passwordfield" destination="fkC-G8-dVK" id="NpK-qB-u18"/>
                         <outlet property="usernamefield" destination="67v-fJ-lNf" id="kMY-Q4-oWV"/>
@@ -491,6 +491,7 @@
                         <segue destination="rNo-qa-H3S" kind="relationship" relationship="viewControllers" id="e9j-Ia-Du9"/>
                         <segue destination="W3p-AS-E6z" kind="relationship" relationship="viewControllers" id="ieK-vI-LQd"/>
                         <segue destination="odh-cg-huu" kind="relationship" relationship="viewControllers" id="Ou2-ld-fG2"/>
+                        <segue destination="Fuc-rh-cuB" kind="relationship" relationship="viewControllers" id="bqK-wm-sek"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FNP-y4-bzi" sceneMemberID="firstResponder"/>
