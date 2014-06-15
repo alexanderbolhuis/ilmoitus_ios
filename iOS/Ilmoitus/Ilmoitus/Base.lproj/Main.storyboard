@@ -418,7 +418,7 @@
         <!--Login View Controller - Log uit-->
         <scene sceneID="nsb-69-OZG">
             <objects>
-                <viewController storyboardIdentifier="Login" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fuc-rh-cuB" customClass="LoginViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Login" title="Log uit" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Fuc-rh-cuB" customClass="LoginViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="mth-Kp-bwX"/>
                         <viewControllerLayoutGuide type="bottom" id="16P-mQ-cMD"/>
