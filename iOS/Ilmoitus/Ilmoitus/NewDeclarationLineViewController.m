@@ -392,6 +392,19 @@
     }
 }
 
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if(textField == self.costField) {
+        if(![self.costDecimalField.text isEqualToString:@""] && ![self.costField.text isEqualToString:@""]) {
+            [self checkMaxCost];
+        }
+    } else if (textField == self.costDecimalField) {
+        if(![self.costField.text isEqualToString:@""] && ![self.costDecimalField.text isEqualToString:@""]) {
+            [self checkMaxCost];
+        }
+    }
+}
+
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     if (textField == self.costField) {
         if (textField.text.length >= 10 && range.length == 0)
@@ -457,6 +470,7 @@
     DeclarationSubType *subtype = [self.subTypeList objectAtIndex:selected];
     self.subtypeField.text = subtype.subTypeName;
     self.declarationLine.subtype = subtype;
+    [self checkMaxCost];
     [self.pickerViewPopup dismissWithClickedButtonIndex:1 animated:YES];
 }
 
@@ -544,8 +558,30 @@
     }
 }
 
+- (void)checkMaxCost
+{
+    if (![self.costField.text isEqualToString:@""] && ![self.costDecimalField.text isEqualToString:@""] && self.declarationLine.subtype.subTypeMaxCost != 0.00)
+    {
+        float maxCost = self.declarationLine.subtype.subTypeMaxCost;
+        float selectedCost = [self.costField.text intValue] + ([self.costDecimalField.text intValue]/100);
+        
+        if(selectedCost != 0.00){
+            
+            if (maxCost < selectedCost) {
+                NSString *errorString = [NSString stringWithFormat:@"De maximum kosten voor dit type zijn %0.2f", maxCost];
+                [self showErrorMessage:@"Maximum kosten" :errorString];
+                self.costField.text = @"";
+                self.costDecimalField.text = @"";
+            }
+        } else {
+            [self showErrorMessage:@"Ongeldig bedrag" :@"Het ingevoerde bedrag is ongeldig"];
+        }
+        
+    }
+}
 
-- (void) showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
+
+- (void)showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle
                                                     message:errorMessage
