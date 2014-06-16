@@ -43,7 +43,6 @@
 		46D94EBF19063A08008E6C01 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 46D94E9E19063A08008E6C01 /* UIKit.framework */; };
 		46D94EC719063A08008E6C01 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 46D94EC519063A08008E6C01 /* InfoPlist.strings */; };
 		46D94EC919063A08008E6C01 /* IlmoitusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94EC819063A08008E6C01 /* IlmoitusTests.m */; };
-		46D94ED419063D12008E6C01 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED319063D12008E6C01 /* SettingsViewController.m */; };
 		46D94ED719063EA2008E6C01 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED619063EA2008E6C01 /* LoginViewController.m */; };
 		46D94EDA19063F82008E6C01 /* DeclarationDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED919063F82008E6C01 /* DeclarationDetailViewController.m */; };
 		84BE5846192F54A800ECE63A /* DeclarationTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE5845192F54A800ECE63A /* DeclarationTypeController.m */; };
@@ -51,6 +50,8 @@
 		84BE584F192F7F0D00ECE63A /* DeclarationSubType.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE584E192F7F0D00ECE63A /* DeclarationSubType.m */; };
 		A273EFC4192BFEF50019B643 /* Attachment.m in Sources */ = {isa = PBXBuildFile; fileRef = A273EFC3192BFEF50019B643 /* Attachment.m */; };
 		A2BF670D194B6E9600F063A4 /* NewAttachmentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2BF670C194B6E9500F063A4 /* NewAttachmentViewController.m */; };
+		A2D43985194BEA5F005A8314 /* DeclarationLinesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D43984194BEA5F005A8314 /* DeclarationLinesTableViewController.m */; };
+		A2D43988194BEA82005A8314 /* AttachmentsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D43987194BEA82005A8314 /* AttachmentsTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,8 +131,6 @@
 		46D94EC419063A08008E6C01 /* IlmoitusTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "IlmoitusTests-Info.plist"; sourceTree = "<group>"; };
 		46D94EC619063A08008E6C01 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		46D94EC819063A08008E6C01 /* IlmoitusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IlmoitusTests.m; sourceTree = "<group>"; };
-		46D94ED219063D12008E6C01 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
-		46D94ED319063D12008E6C01 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		46D94ED519063EA2008E6C01 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		46D94ED619063EA2008E6C01 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		46D94ED819063F82008E6C01 /* DeclarationDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationDetailViewController.h; sourceTree = "<group>"; };
@@ -147,6 +146,10 @@
 		A276B5A31947B01B00B871BD /* StateType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StateType.h; sourceTree = "<group>"; };
 		A2BF670B194B6E9500F063A4 /* NewAttachmentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewAttachmentViewController.h; sourceTree = "<group>"; };
 		A2BF670C194B6E9500F063A4 /* NewAttachmentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewAttachmentViewController.m; sourceTree = "<group>"; };
+		A2D43983194BEA5F005A8314 /* DeclarationLinesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationLinesTableViewController.h; sourceTree = "<group>"; };
+		A2D43984194BEA5F005A8314 /* DeclarationLinesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeclarationLinesTableViewController.m; sourceTree = "<group>"; };
+		A2D43986194BEA82005A8314 /* AttachmentsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttachmentsTableViewController.h; sourceTree = "<group>"; };
+		A2D43987194BEA82005A8314 /* AttachmentsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AttachmentsTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -280,10 +283,8 @@
 				46850DB21906A7E800498B6F /* Models */,
 				46D94ED819063F82008E6C01 /* DeclarationDetailViewController.h */,
 				46D94ED919063F82008E6C01 /* DeclarationDetailViewController.m */,
-				46D94ED219063D12008E6C01 /* SettingsViewController.h */,
 				46D94ED519063EA2008E6C01 /* LoginViewController.h */,
 				46D94ED619063EA2008E6C01 /* LoginViewController.m */,
-				46D94ED319063D12008E6C01 /* SettingsViewController.m */,
 				46D94EAC19063A08008E6C01 /* Main.storyboard */,
 				46D94EAF19063A08008E6C01 /* MyDeclarationViewController.h */,
 				46D94EB019063A08008E6C01 /* MyDeclarationViewController.m */,
@@ -298,6 +299,10 @@
 				A276B5A31947B01B00B871BD /* StateType.h */,
 				A2BF670B194B6E9500F063A4 /* NewAttachmentViewController.h */,
 				A2BF670C194B6E9500F063A4 /* NewAttachmentViewController.m */,
+				A2D43983194BEA5F005A8314 /* DeclarationLinesTableViewController.h */,
+				A2D43984194BEA5F005A8314 /* DeclarationLinesTableViewController.m */,
+				A2D43986194BEA82005A8314 /* AttachmentsTableViewController.h */,
+				A2D43987194BEA82005A8314 /* AttachmentsTableViewController.m */,
 			);
 			path = Ilmoitus;
 			sourceTree = "<group>";
@@ -449,8 +454,8 @@
 				463019F41917D1D1004D2613 /* AFURLRequestSerialization.m in Sources */,
 				A2BF670D194B6E9600F063A4 /* NewAttachmentViewController.m in Sources */,
 				46D94ED719063EA2008E6C01 /* LoginViewController.m in Sources */,
+				A2D43988194BEA82005A8314 /* AttachmentsTableViewController.m in Sources */,
 				463019F61917D1D1004D2613 /* AFURLSessionManager.m in Sources */,
-				46D94ED419063D12008E6C01 /* SettingsViewController.m in Sources */,
 				463019EF1917D1D0004D2613 /* AFHTTPRequestOperationManager.m in Sources */,
 				463019FC1917D1D1004D2613 /* UIProgressView+AFNetworking.m in Sources */,
 				84BE584F192F7F0D00ECE63A /* DeclarationSubType.m in Sources */,
@@ -458,6 +463,7 @@
 				A273EFC4192BFEF50019B643 /* Attachment.m in Sources */,
 				46B58F2519234BFB0072B8CB /* Supervisor.m in Sources */,
 				463019FA1917D1D1004D2613 /* UIButton+AFNetworking.m in Sources */,
+				A2D43985194BEA5F005A8314 /* DeclarationLinesTableViewController.m in Sources */,
 				463019F51917D1D1004D2613 /* AFURLResponseSerialization.m in Sources */,
 				46A9D7D11909228A00C5B468 /* DeclarationLine.m in Sources */,
 				46D94EA719063A08008E6C01 /* main.m in Sources */,

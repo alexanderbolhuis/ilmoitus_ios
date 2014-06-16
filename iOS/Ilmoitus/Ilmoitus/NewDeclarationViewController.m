@@ -7,8 +7,8 @@
 //
 
 #import "NewDeclarationViewController.h"
-#import "NewDeclarationLineViewController.h"
-#import "NewAttachmentViewController.h"
+#import "DeclarationLinesTableViewController.h"
+#import "AttachmentsTableViewController.h"
 #import "Declaration.h"
 #import "DeclarationLine.h"
 #import "Supervisor.h"
@@ -20,12 +20,13 @@
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
 @property (nonatomic) NSMutableArray *supervisorList;
 @property (weak, nonatomic) IBOutlet UITextView *comment;
-@property (weak, nonatomic) IBOutlet UITableView *declarationLineTable;
-@property (weak, nonatomic) IBOutlet UITableView *attachmentTable;
+
 @property (nonatomic) UIPickerView * pktStatePicker;
 @property (nonatomic) UIToolbar *mypickerToolbar;
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
+@property (weak, nonatomic) IBOutlet UILabel *bijlageLabel;
+@property (weak, nonatomic) IBOutlet UILabel *regelsLabel;
 
 @end
 
@@ -49,6 +50,12 @@
     [self decalrationChanged];
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    self.regelsLabel.text = [NSString stringWithFormat:@"Declaratie items: %d", [self.declaration.lines count]];
+    self.bijlageLabel.text = [NSString stringWithFormat:@"Bijlages: %d", [self.declaration.attachments count]];
+    [self setTotalPrice];
+}
 
 - (void)viewDidLoad
 {
@@ -59,10 +66,6 @@
     self.supervisor.delegate = self;
     [self.comment setReturnKeyType: UIReturnKeyDone];
     self.comment.delegate = self;
-    self.declarationLineTable.delegate = self;
-    self.declarationLineTable.dataSource = self;
-    self.attachmentTable.delegate = self;
-    self.attachmentTable.dataSource = self;
     
     [self getSupervisorList];
     
@@ -76,16 +79,14 @@
     else
     {
         [self.navigationItem setTitle:@"Declaratie bekijken"];
+        self.supervisor.enabled = NO;
+        self.comment.editable = NO;
         for (UIButton *button in self.buttons)
         {
             button.hidden = YES;
         }
-        self.supervisor.enabled = NO;
-        self.comment.editable = NO;
-        
     }
     
-    [self declarationLinesChanged];
     self.comment.text = self.declaration.comment;
     
     
@@ -154,71 +155,6 @@
     self.supervisor.text = self.declaration.comment;
     
     
-}
-
-
--(IBAction)unwindToNewDeclaration:(UIStoryboardSegue *)segue
-{
-    if([[segue sourceViewController] isKindOfClass: [NewDeclarationLineViewController class]])
-    {
-        NewDeclarationLineViewController * source = [segue sourceViewController];
-        switch (source.state)
-        {
-            case NEW:
-                if(source.declarationLine != nil)
-                {
-                    [self.declaration.lines addObject:source.declarationLine];
-                    [self declarationLinesChanged];
-                }
-                break;
-            case EDIT:
-                if(source.declarationLine!=nil)
-                {
-                    NSIndexPath *index = [self.declarationLineTable indexPathForSelectedRow];
-                    [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
-                    [self declarationLinesChanged];
-                }
-                else
-                {
-                    [self.declaration.lines removeObjectAtIndex:[self.declarationLineTable indexPathForSelectedRow].row];
-                    [self declarationLinesChanged];
-                }
-                break;
-                
-            default:
-                break;
-        }
-    }
-    else if([[segue sourceViewController] isKindOfClass:[NewAttachmentViewController class]])
-    {
-        NewAttachmentViewController * source = [segue sourceViewController];
-        switch (source.state)
-        {
-            case NEW:
-                if(source.attachment != nil)
-                {
-                    [self.declaration.attachments addObject:source.attachment];
-                    [self attachmentsChanged];
-                }
-                break;
-            case EDIT:
-                if(source.attachment!=nil)
-                {
-                    NSIndexPath *index = [self.attachmentTable indexPathForSelectedRow];
-                    [self.declaration.attachments replaceObjectAtIndex:index.row withObject:source.attachment];
-                    [self attachmentsChanged];
-                }
-                else
-                {
-                    [self.declaration.attachments removeObjectAtIndex:[self.attachmentTable indexPathForSelectedRow].row];
-                    [self attachmentsChanged];
-                }
-                break;
-                
-            default:
-                break;
-        }
-    }
 }
 
 -(void)getAttachmentToken:(Attachment *)att
@@ -544,120 +480,10 @@
     }];
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    if(tableView == self.declarationLineTable)
-    {
-        return [self.declaration.lines count];
-    }
-    else if(tableView == self.attachmentTable)
-    {
-        return [self.declaration.attachments count];
-    }
-    return 0;
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
-
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    UITableViewCell *cell = nil;
-    if(tableView == self.declarationLineTable)
-    {
-        static NSString *CellIdentifier = @"DeclarationLineCell";
-        
-        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        if (cell == nil)
-        {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        }
-        
-        DeclarationLine *line = [self.declaration.lines objectAtIndex:indexPath.row];
-        
-        UILabel *label = (UILabel *)[cell viewWithTag:1];
-        UILabel *subTypelabel = (UILabel *)[cell viewWithTag:2];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-        formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
-        NSDate *date = [formatter dateFromString:line.date];
-        
-        [formatter setDateFormat:@"dd-MM-yyyy"];
-        NSString *dateString = [formatter stringFromDate:date];
-        
-        label.text = [NSString stringWithFormat:@"%@ - €%.02f", dateString, line.cost];
-        subTypelabel.text = [NSString stringWithFormat:@"%@", line.subtype.subTypeName];
-        
-        return cell;
-    }
-    
-    else if(tableView == self.attachmentTable)
-    {
-        static NSString *CellIdentifier = @"AttachmentCell";
-        
-        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        if (cell == nil)
-        {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-        }
-        
-        Attachment *attachment = [self.declaration.attachments objectAtIndex:indexPath.row];
-        
-        UILabel *label = (UILabel *)[cell viewWithTag:1];
-        
-        label.text = attachment.name;
-        
-    }
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        if(tableView == self.declarationLineTable)
-        {
-            [self.declaration.lines removeObjectAtIndex:indexPath.row];
-            [self setTotalPrice];
-        }
-        else if(tableView == self.attachmentTable)
-        {
-            [self.declaration.attachments removeObjectAtIndex:indexPath.row];
-        }
-        
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the specified item to be editable.
-    return self.state != VIEW;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    // Return NO if you do not want the item to be re-orderable.
-    return NO;
-}
-
 -(void)decalrationChanged
 {
-    [self declarationLinesChanged];
-    [self setTotalPrice];
-    [self attachmentsChanged];
+    [self viewWillAppear:YES];
     self.comment.text = self.declaration.comment;
-}
-
--(void)attachmentsChanged
-{
-    [self.attachmentTable reloadData];
-}
-
--(void)declarationLinesChanged
-{
-    [self.declarationLineTable reloadData];
-    [self setTotalPrice];
 }
 
 -(void)setTotalPrice
@@ -669,38 +495,21 @@
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    if([[segue identifier] isEqualToString:@"viewLine"])
+    if([[segue identifier] isEqualToString:@"listLines"])
     {
-        NewDeclarationLineViewController *destination = [segue destinationViewController];
+        DeclarationLinesTableViewController *destination = [segue destinationViewController];
         
-        NSIndexPath *index = [self.declarationLineTable indexPathForSelectedRow];
-        destination.declarationLine = [self.declaration.lines objectAtIndex:index.row];
-        
-        if(self.state == NEW)
-        {
-            destination.state = EDIT;
-        }
-        else
-        {
-            destination.state = self.state;
-        }
+        destination.declaration = self.declaration;
+
+        destination.state = self.state;
     }
-    if([[segue identifier] isEqualToString:@"viewAttachment"])
+    if([[segue identifier] isEqualToString:@"listAttachment"])
     {
-        NewAttachmentViewController *destination = [segue destinationViewController];
+        AttachmentsTableViewController *destination = [segue destinationViewController];
+
+        destination.declaration = self.declaration;
         
-        NSIndexPath *index = [self.attachmentTable indexPathForSelectedRow];
-        destination.attachment = [self.declaration.attachments objectAtIndex:index.row];
-        
-        if(self.state == NEW)
-        {
-            destination.state = EDIT;
-        }
-        else
-        {
-            destination.state = self.state;
-            [self getAttachmentToken:destination.attachment];
-        }
+        destination.state = self.state;
     }
     
 }
