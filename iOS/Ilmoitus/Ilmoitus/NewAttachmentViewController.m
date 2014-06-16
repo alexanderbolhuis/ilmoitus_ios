@@ -61,7 +61,7 @@
 - (IBAction)addAttachment:(id)sender {
     NSLog(@"%@", self.attachment.name);
     
-    if(![self.attachment.name isEqualToString:@""] && self.attachment != nil){
+    if(![self.attachment.name isEqualToString:@""] && self.attachment != nil && self.state != NEW ){
         [self openAttachmentFile:self.attachment.name];
     } else {
         [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Close" destructiveButtonTitle:nil otherButtonTitles:@"Choose existing", @"Create new",  nil]showInView:self.view];
