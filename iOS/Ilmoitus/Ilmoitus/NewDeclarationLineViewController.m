@@ -67,8 +67,7 @@
         date = [dateFormat dateFromString:self.declarationLine.date];
         [dateFormat setDateFormat:@"dd-MM-yyyy"];
         
-        self.dateField.text = [dateFormat stringFromDate:date];
-        self.commentField.text = self.declarationLine.description;
+        self.commentField.text = self.declarationLine.comment;
         int intCost = floorf(self.declarationLine.cost);
         int decimal = roundf(((self.declarationLine.cost - intCost)*100));
         self.costField.text = [NSString stringWithFormat:@"%d", intCost];
@@ -99,19 +98,19 @@
     [self setupInputFields];
     [self setupPickers];
     self.add.titleLabel.text = @"Toevoegen";
-    self.title = @"declaratie regel maken";
+    self.title = @"Declaratie regel maken";
 }
 
 -(void)setModusEdit
 {
     [self setModusNew];
     self.add.titleLabel.text = @"Updaten";
-    self.title = @"declaratie regel aanpassen";
+    self.title = @"Declaratie regel aanpassen";
 }
 
 -(void)setModusView
 {
-    self.title =@"declaratie regel inzien";
+    self.title =@"Declaratie regel inzien";
     [self tearDownInput];
 }
 
@@ -330,6 +329,8 @@
         if(![self.costField.text isEqualToString:@""] && ![self.costDecimalField.text isEqualToString:@""]) {
             [self checkMaxCost];
         }
+    } else if (textField == self.commentField) {
+        self.declarationLine.comment = self.commentField.text;
     }
 }
 

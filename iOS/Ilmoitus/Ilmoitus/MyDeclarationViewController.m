@@ -185,6 +185,11 @@
             DeclarationLine *foundLine = [[DeclarationLine alloc]init];
             foundLine.cost = [line[@"cost"] floatValue];
             foundLine.date = line[@"receipt_date"];
+            if (line[@"comment"] != nil && ![line[@"comment"]isEqual:[NSNull null]]) {
+                foundLine.comment = line[@"comment"];
+            } else {
+                foundLine.comment = @"";
+            }
             
             DeclarationSubType *declarationSubType = [[DeclarationSubType alloc]init];
             NSDictionary *declarationSubTypeDict = line[@"declaration_sub_type"];
@@ -199,7 +204,6 @@
             foundLine.type = declarationType;
             
             [lines addObject:foundLine];
-            //TODO DeclarationType
         }
         dec.lines = lines;
         

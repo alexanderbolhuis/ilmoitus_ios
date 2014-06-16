@@ -88,6 +88,9 @@
                     <tabBarItem key="tabBarItem" title="Indienen" id="Irb-Oe-ylH"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZpI-zp-ZNi">
                         <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="QUy-BD-bpt" kind="relationship" relationship="rootViewController" id="Bl9-4L-OI8"/>

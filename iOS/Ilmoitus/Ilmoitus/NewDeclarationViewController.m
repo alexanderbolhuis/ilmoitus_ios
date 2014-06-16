@@ -67,15 +67,15 @@
     [self getSupervisorList];
     
     if (_declaration == nil) {
-        self.title = @"Declaratie Aanmaken";
+        [self.navigationItem setTitle:@"Declaratie aanmaken"];
     }
     else if(self.state == EDIT)
     {
-        self.title = @"Declaratie Aanpassen";
+        [self.navigationItem setTitle:@"Declaratie aanpassen"];
     }
     else
     {
-        self.title = @"Declaratie Bekijken";
+        [self.navigationItem setTitle:@"Declaratie bekijken"];
         for (UIButton *button in self.buttons)
         {
             button.hidden = YES;
@@ -345,7 +345,6 @@
 {
     if(self.state == VIEW)
     {
-        //TODO error?
         return;
     } else if (self.state == EDIT) {
         [self editDeclaration];
@@ -443,7 +442,11 @@
     NSMutableArray *declarationlines = [[NSMutableArray alloc] init];
     for (DeclarationLine *line in decl.lines)
     {
-        NSDictionary *currentline = @{@"receipt_date": line.date, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
+        if (line.comment == nil) {
+            line.comment = @"";
+        }
+        
+        NSDictionary *currentline = @{@"receipt_date": line.date, @"comment":line.comment, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
         [declarationlines addObject:currentline];
     }
     
