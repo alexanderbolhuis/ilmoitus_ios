@@ -221,13 +221,39 @@
     }
 }
 
--(void)downloadAttachment:(Attachment *)att
+-(void)getAttachmentToken:(Attachment *)att
 {
-    // TODO switch to token based GET
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    NSString *url = [NSString stringWithFormat:@"%@/attachment_token/%lld", baseURL, att.ident];
+    NSLog(@"%@", url);
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError* error;
+        NSDictionary* json = [NSJSONSerialization
+                              JSONObjectWithData:responseObject
+                              
+                              options:kNilOptions
+                              error:&error];
+        
+        NSLog(@"JSON response: %@", json);
+
+        NSString *token = json[@"attachment_token"];
+        [self downloadAttachment:token :att];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error while getting attachment token: %@", error);
+    }];
+
+}
+
+-(void)downloadAttachment:(NSString *)token :(Attachment *)att
+{
     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:att.name];
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSString *url = [NSString stringWithFormat:@"%@/attachment/%lld", @"http://5.sns-ilmoitus.appspot.com", att.ident];
+    NSString *url = [NSString stringWithFormat:@"%@/attachment/%lld/%@", baseURL, att.ident, token];
     AFHTTPRequestOperation *op = [manager GET:url
                                    parameters:nil
                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -658,7 +684,7 @@
         else
         {
             destination.state = self.state;
-            [self downloadAttachment:destination.attachment];
+            [self getAttachmentToken:destination.attachment];
         }
     }
     

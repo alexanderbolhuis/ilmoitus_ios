@@ -522,14 +522,14 @@
 {
     if (sender == self.add)
     {
-        if (([self.costField.text isEqualToString:@""] || [self.costDecimalField.text isEqualToString:@""]) && self.declarationLine.subtype.ident == nil) {
+        if (([self.costField.text isEqualToString:@""] || [self.costDecimalField.text isEqualToString:@""]) && self.declarationLine.subtype.ident == 0) {
             [self showErrorMessage:@"Niets ingevoerd" :@"Er is niets ingevoerd."];
             return NO;
         } else if ([self.costField.text isEqualToString:@"" ] || [self.costDecimalField.text isEqualToString:@""]) {
             // TODO Make errormessages for each inputfield
             [self showErrorMessage:@"Ongeldig bedrag" :@"Er is een ongeldig bedrag ingevoerd."];
             return NO;
-        } else if (self.declarationLine.subtype.ident == nil) {
+        } else if (self.declarationLine.subtype.ident == 0) {
             [self showErrorMessage:@"Geen Type/Subtype geselecteerd" :@"Er geen Type en/of Subtype geselecteerd."];
             return NO;
         } else {
