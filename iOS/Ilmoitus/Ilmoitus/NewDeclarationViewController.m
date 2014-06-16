@@ -248,8 +248,9 @@
 }
 
 - (void)clearView {
-    self.declaration = nil;
+    _declaration = nil;
     [self viewDidLoad];
+    [self declaration];
 }
 
 - (void)didReceiveMemoryWarning
@@ -298,6 +299,10 @@
         }
         
         // Declaration
+        if (decl.comment == nil) {
+            decl.comment = @"";
+        }
+        
         NSDictionary *declaration = @{@"state":decl.status, @"created_by":[NSNumber numberWithLongLong:decl.createdBy], @"supervisor":[decl.assignedTo firstObject], @"comment":decl.comment, @"items_total_price":[NSNumber numberWithFloat:decl.itemsTotalPrice], @"items_count":[NSNumber numberWithInt:decl.itemsCount], @"lines":declarationlines, @"attachments":attachments};
         
         
