@@ -144,6 +144,7 @@
     {
         [self.declaration.attachments removeObjectAtIndex:indexPath.row];
     }
+    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 // Override to support conditional rearranging of the table view.
