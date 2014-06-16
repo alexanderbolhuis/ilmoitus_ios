@@ -20,7 +20,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
 @property (nonatomic) NSMutableArray *supervisorList;
 @property (weak, nonatomic) IBOutlet UITextView *comment;
+@property (weak, nonatomic) IBOutlet UIButton *add;
 
+@property (weak, nonatomic) IBOutlet UIButton *cancel;
 @property (nonatomic) UIPickerView * pktStatePicker;
 @property (nonatomic) UIToolbar *mypickerToolbar;
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
@@ -75,6 +77,16 @@
     else if(self.state == EDIT)
     {
         [self.navigationItem setTitle:@"Declaratie aanpassen"];
+        
+        [self.cancel setTitle:@"Verwijder" forState:UIControlStateNormal];
+        [self.cancel setTitle:@"Verwijder" forState:UIControlStateHighlighted];
+        [self.cancel setTitle:@"Verwijder" forState:UIControlStateDisabled];
+        [self.cancel setTitle:@"Verwijder" forState:UIControlStateSelected];
+        
+        [self.add setTitle:@"Opslaan" forState:UIControlStateNormal];
+        [self.add setTitle:@"Opslaan" forState:UIControlStateHighlighted];
+        [self.add setTitle:@"Opslaan" forState:UIControlStateDisabled];
+        [self.add setTitle:@"Opslaan" forState:UIControlStateSelected];
     }
     else
     {
@@ -300,7 +312,11 @@
         NSMutableArray *declarationlines = [[NSMutableArray alloc] init];
         for (DeclarationLine *line in decl.lines)
         {
-            NSDictionary *currentline = @{@"receipt_date": line.date, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
+            if (line.comment == nil) {
+                line.comment = @"";
+            }
+            
+            NSDictionary *currentline = @{@"receipt_date": line.date, @"comment":line.comment, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
             [declarationlines addObject:currentline];
         }
         
@@ -329,7 +345,8 @@
                                   
                                   options:kNilOptions
                                   error:&error];
-            //[self clearView];
+            [self showSuccessMessage:@"Indienen geslaagd" :@"Declaratie is ingediend"];
+            [self clearView];
             NSLog(@"JSON response data for saving declaration: %@",json);
             // Handle success
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -358,6 +375,7 @@
                               options:kNilOptions
                               error:&error];
         
+        [self showSuccessMessage:@"Verwijderen geslaagd" :@"Declaratie is verwijdert"];
         [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response: %@", json);
@@ -416,7 +434,7 @@
                               
                               options:kNilOptions
                               error:&error];
-        
+        [self showSuccessMessage:@"Aanpassen geslaagd" :@"Declaratie is aangepast"];
         [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response data for saving declaration: %@",json);
@@ -491,6 +509,16 @@
     NSString* formattedAmount = [NSString stringWithFormat:@"%.2f", self.declaration.calculateTotalPrice];
     self.totalPrice.text = [NSString stringWithFormat:@"Totaal bedrag: €%@", formattedAmount];
     
+}
+
+-(void)showSuccessMessage: (NSString*)successTitle :(NSString*)successMessage
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:successTitle
+                                                    message:successMessage
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

@@ -99,6 +99,7 @@
     [self setupInputFields];
     [self setupPickers];
     self.add.titleLabel.text = @"Toevoegen";
+    self.cancel.titleLabel.text = @"Annuleren";
     self.title = @"Declaratie regel maken";
 }
 
@@ -106,7 +107,14 @@
 {
     [self setModusNew];
     self.add.titleLabel.text = @"Updaten";
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateNormal];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateHighlighted];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateDisabled];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateSelected];
     self.title = @"Declaratie regel aanpassen";
+    
+    [self.cancel.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [self.add.titleLabel setTextAlignment: NSTextAlignmentCenter];
 }
 
 -(void)setModusView

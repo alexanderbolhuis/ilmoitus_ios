@@ -121,13 +121,13 @@
                 
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 
+                // Perform Segue
+                [self performSegueWithIdentifier:@"login_success" sender:self];
+                
                 NSLog(@"%@", json);
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 NSLog(@"Error: %@", responseObject);
             }];
-            
-            // Perform Segue
-            [self performSegueWithIdentifier:@"login_success" sender:self];
         } else {
             NSLog(@"JSON: %@",@"Failed");
                 self.loginFailedAlert = [[UIAlertView alloc] initWithTitle:@"Error"
