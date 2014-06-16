@@ -398,7 +398,6 @@
                         <outlet property="image" destination="wme-Ri-NON" id="vKG-Vl-tsR"/>
                         <outlet property="select" destination="aCn-9d-2xc" id="aJM-st-B6x"/>
                         <outletCollection property="buttonCollection" destination="oAn-ZP-twK" id="kxF-xu-eJI"/>
-                        <outletCollection property="buttonCollection" destination="aCn-9d-2xc" id="wxD-1R-SRp"/>
                         <outletCollection property="buttonCollection" destination="jT3-9J-AVe" id="T0a-Kc-PEl"/>
                     </connections>
                 </viewController>

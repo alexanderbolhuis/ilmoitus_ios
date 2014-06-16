@@ -169,13 +169,20 @@
     [self.select setTitle:@"Bijlage openen" forState:UIControlStateDisabled];
     [self.select setTitle:@"Bijlage openen" forState:UIControlStateSelected];
     
-    self.add.titleLabel.text = @"Updaten";
+    [self.add setTitle:@"Updaten" forState:UIControlStateNormal];
+    [self.add setTitle:@"Updaten" forState:UIControlStateHighlighted];
+    [self.add setTitle:@"Updaten" forState:UIControlStateDisabled];
+    [self.add setTitle:@"Updaten" forState:UIControlStateSelected];
     self.title = @"Bijlage aanpassen";
 }
 
 -(void)setModusView
 {
     self.title =@"Bijlage bekijken";
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateNormal];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateHighlighted];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateDisabled];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateSelected];
     [self tearDownInput];
 }
 
