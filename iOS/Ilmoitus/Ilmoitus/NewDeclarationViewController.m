@@ -483,8 +483,6 @@
         }
         
         [self.supervisorPicker reloadAllComponents];
-        
-        // TODO create dropdown to select supervisor
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting supervisor list: %@", error);
     }];

@@ -54,7 +54,6 @@
     return declarationsTypesFound;
 }
 
-// expect the id from the DeclarationMainType
 - (NSMutableArray*)downLoadSubTypes:(NSInteger*)mainTpyeId
 {
     NSString *combinedURL = [NSString stringWithFormat:@"%@%@", baseURL, @"/declarationsubtype/"];

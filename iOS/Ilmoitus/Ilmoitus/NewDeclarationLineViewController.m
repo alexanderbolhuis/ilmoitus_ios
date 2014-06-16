@@ -536,7 +536,6 @@
             [self showErrorMessage:@"Niets ingevoerd" :@"Er is niets ingevoerd."];
             return NO;
         } else if ([self.costField.text isEqualToString:@"" ] || [self.costDecimalField.text isEqualToString:@""]) {
-            // TODO Make errormessages for each inputfield
             [self showErrorMessage:@"Ongeldig bedrag" :@"Er is een ongeldig bedrag ingevoerd."];
             return NO;
         } else if (self.declarationLine.subtype.ident == 0) {
