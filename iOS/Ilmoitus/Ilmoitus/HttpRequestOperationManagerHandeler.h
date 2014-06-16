@@ -10,6 +10,6 @@
 
 @interface HttpRequestOperationManagerHandeler : NSObject
 +(AFHTTPRequestOperationManager*)createNewHttpRequestOperationManager;
-+ (void) handelErrorCode: (AFHTTPRequestOperation*) operation: (NSError*) error;
++ (void) handelErrorCode: (AFHTTPRequestOperation*) operation: (NSError*) error:(UIViewController *) sourceView;
 + (void) showErrorMessage: (NSString*)errorTitle:(NSString*)errorMessage;
 @end

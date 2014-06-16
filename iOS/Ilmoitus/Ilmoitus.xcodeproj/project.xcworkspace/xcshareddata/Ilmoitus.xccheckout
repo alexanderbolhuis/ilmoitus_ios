@@ -6,12 +6,15 @@
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>A47A4047-201D-4946-86AB-7611BD9BF16D</string>
+	<string>6D49274A-BE49-4BFF-8918-3C0220D3A3EB</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Ilmoitus</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>BBAABC4F-7AA0-414D-8D7E-904AB70C53E3</key>
 		<string>https://github.com/rhsattev/ilmoitus_ios.git</string>
+		<key>5F4773DB-4345-4145-B100-2F1735CD3146</key>
+		<string>https://github.com/spboom/ilmoitus_ios.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>iOS/Ilmoitus/Ilmoitus.xcodeproj/project.xcworkspace</string>
@@ -26,6 +29,15 @@
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
 	<string>BBAABC4F-7AA0-414D-8D7E-904AB70C53E3</string>
+		<key>5F4773DB-4345-4145-B100-2F1735CD3146</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/spboom/ilmoitus_ios.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5F4773DB-4345-4145-B100-2F1735CD3146</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -33,6 +45,7 @@
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>BBAABC4F-7AA0-414D-8D7E-904AB70C53E3</string>
+			<string>5F4773DB-4345-4145-B100-2F1735CD3146</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ilmoitus_ios</string>
 		</dict>

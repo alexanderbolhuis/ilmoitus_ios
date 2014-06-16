@@ -14,6 +14,7 @@
 #import "constants.h"
 #import "Attachment.h"
 #import "HttpRequestOperationManagerHandeler.h"
+#import "StateType.h"
 
 @interface NewDeclarationViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
@@ -23,9 +24,7 @@
 @property (nonatomic) UIPickerView * pktStatePicker;
 @property (nonatomic) UIToolbar *mypickerToolbar;
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
-@property (weak, nonatomic) IBOutlet UILabel *navItem;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
-@property (nonatomic) StateType state;
 
 @end
 
@@ -64,15 +63,15 @@
     [self getSupervisorList];
     
     if (_declaration == nil) {
-        self.navItem.text = @"Declaratie Aanmaken";
+        self.title = @"Declaratie Aanmaken";
     }
-    else if(self.edit)
+    else if(self.state == EDIT)
     {
-        self.navItem.text = @"Declaratie Aanpassen";
+        self.title = @"Declaratie Aanpassen";
     }
     else
     {
-        self.navItem.text = @"Declaratie Bekijken";
+        self.title = @"Declaratie Bekijken";
         for (UIButton *button in self.buttons)
         {
             button.hidden = YES;
@@ -148,10 +147,35 @@
 -(IBAction)unwindToNewDeclaration:(UIStoryboardSegue *)segue
 {
     NewDeclarationLineViewController * source = [segue sourceViewController];
+    switch (source.state)
+    {
+        case NEW:
+            if(source.declarationLine != nil)
+            {
+                [self.declaration.lines addObject:source.declarationLine];
+                [self declarationLinesChanged];
+            }
+            break;
+        case EDIT:
+            if(source.declarationLine!=nil)
+            {
+                NSIndexPath *index = [self.tableView indexPathForSelectedRow];
+                [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
+                [self declarationLinesChanged];
+            }
+            else
+            {
+                [self.declaration.lines removeObjectAtIndex:[self.tableView indexPathForSelectedRow].row];
+                [self declarationLinesChanged];
+            }
+            break;
+            
+        default:
+            break;
+    }
     if(source.declarationLine != nil)
     {
         [self.declaration.lines addObject:source.declarationLine];
-        [self declarationLinesChanged];
     }
     if(source.attachment != nil)
     {
@@ -310,7 +334,132 @@
         // Handle success
     } failure:^(AFHTTPRequestOperation *operation, NSError *error)
     {
-        [HttpRequestOperationManagerHandeler handelErrorCode:operation :error];
+        [HttpRequestOperationManagerHandeler handelErrorCode:operation :error:self];
+    }];
+    
+    [apiRequest start];
+}
+
+-(void)deleteDeclaration
+{
+    // Do Request
+    AFHTTPRequestOperationManager *manager = [HttpRequestOperationManagerHandeler createNewHttpRequestOperationManager];
+    
+    [manager.reachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status)
+     {
+         switch (status)
+         {
+             case AFNetworkReachabilityStatusReachableViaWWAN:
+             case AFNetworkReachabilityStatusReachableViaWiFi:
+                 NSLog(@"Connected to network");
+                 [self deleteMarkedDeclaration:manager];
+                 break;
+                 
+             case AFNetworkReachabilityStatusNotReachable:
+                 NSLog(@"No internet connection");
+                 [HttpRequestOperationManagerHandeler showErrorMessage:@"Geen verbinding" : @"Kon geen verbinding maken met een netwerk"];
+                 break;
+                 
+             default:
+                 NSLog(@"Unknown internet connection");
+                 [HttpRequestOperationManagerHandeler showErrorMessage:@"Onbekende verbinding" : @"Verbonden met een onbekend soort netwerk"];
+                 break;
+         }
+     }];
+}
+
+-(void)deleteMarkedDeclaration:(AFHTTPRequestOperationManager*) manager
+{
+    NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, self.declaration.ident];
+    [manager DELETE:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        /* NSError* error;
+        NSDictionary* json = [NSJSONSerialization
+                              JSONObjectWithData:responseObject
+                              
+                              options:kNilOptions
+                              error:&error];*/
+        
+        // TODO Navigate back to MyDeclarationView if succesfully deleted
+        
+        // NSLog(@"JSON response: %@", json);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error while getting supervisor list: %@", error);
+        [HttpRequestOperationManagerHandeler handelErrorCode:operation : error:self];
+    }];
+}
+
+-(void)editDeclaration
+{
+    AFHTTPRequestOperationManager *manager = [HttpRequestOperationManagerHandeler createNewHttpRequestOperationManager];
+    
+    [manager.reachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status)
+     {
+         switch (status)
+         {
+             case AFNetworkReachabilityStatusReachableViaWWAN:
+             case AFNetworkReachabilityStatusReachableViaWiFi:
+                 NSLog(@"Connected to network");
+                 [self uploadChangedDeclaration:manager];
+                 break;
+                 
+             case AFNetworkReachabilityStatusNotReachable:
+                 NSLog(@"No internet connection");
+                 [HttpRequestOperationManagerHandeler showErrorMessage:@"Geen verbinding" : @"Kon geen verbinding maken met een netwerk"];
+                 break;
+                 
+             default:
+                 NSLog(@"Unknown internet connection");
+                 [HttpRequestOperationManagerHandeler showErrorMessage:@"Onbekende verbinding" : @"Verbonden met een onbekend soort netwerk"];
+                 break;
+         }
+     }];
+}
+
+-(void) uploadChangedDeclaration:(AFHTTPRequestOperationManager*) manager
+{
+    Declaration *decl = self.declaration;
+    // Lines
+    NSMutableArray *declarationlines = [[NSMutableArray alloc] init];
+    for (DeclarationLine *line in decl.lines)
+    {
+        NSDictionary *currentline = @{@"receipt_date": line.date, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
+        [declarationlines addObject:currentline];
+    }
+    
+    // Attachments
+    NSMutableArray *attachments = [[NSMutableArray alloc] init];
+    for (Attachment *attachment in self.declaration.attachments)
+    {
+        NSDictionary *currentAttachment = @{@"name":attachment.name, @"file":attachment.data};
+        [attachments addObject:currentAttachment];
+    }
+    
+    // Declaration
+    NSDictionary *declaration = @{@"state":decl.status, @"created_by":[NSNumber numberWithLongLong:decl.createdBy], @"supervisor":[decl.assignedTo firstObject], @"comment":decl.comment, @"items_total_price":[NSNumber numberWithFloat:decl.itemsTotalPrice], @"items_count":[NSNumber numberWithInt:decl.itemsCount], @"lines":declarationlines, @"attachments":attachments};
+    
+    
+    // Total dict
+    NSDictionary *params = @{@"declaration":declaration};
+    
+    // NSLog(@"JSON data that is going to be saved/sent: %@",params);
+    
+    NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, self.declaration.ident];
+    AFHTTPRequestOperation *apiRequest = [manager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        /* NSError* error;
+        NSDictionary* json = [NSJSONSerialization
+                              JSONObjectWithData:responseObject
+                              
+                              options:kNilOptions
+                              error:&error]; */
+
+        // TODO Navigate back to MyDeclarationView if succesfully edited
+        
+        // NSLog(@"JSON response data for saving declaration: %@",json);
+        // Handle success
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
+        // Handle error
+        [HttpRequestOperationManagerHandeler handelErrorCode:operation :error: self];
     }];
     
     [apiRequest start];
@@ -345,7 +494,8 @@
 - (void) downloadSupervisorFromServer:(AFHTTPRequestOperationManager*) manager
 {
     NSString *url = [NSString stringWithFormat:@"%@/current_user/supervisors", baseURL];
-    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
+    {
         NSError* error;
         NSDictionary* json = [NSJSONSerialization
                               JSONObjectWithData:responseObject
@@ -384,7 +534,7 @@
         // TODO create dropdown to select supervisor
     } failure:^(AFHTTPRequestOperation *operation, NSError *error)
     {
-        [HttpRequestOperationManagerHandeler handelErrorCode:operation :error];
+        [HttpRequestOperationManagerHandeler handelErrorCode:operation :error:self];
     }];
 }
 
@@ -436,7 +586,7 @@
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return self.edit;
+    return self.state != VIEW;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
@@ -463,5 +613,25 @@
     NSString* formattedAmount = [NSString stringWithFormat:@"%.2f", self.declaration.calculateTotalPrice];
     self.totalPrice.text = [NSString stringWithFormat:@"Totaal bedrag: €%@", formattedAmount];
 
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([[segue identifier] isEqualToString:@"viewLine"])
+    {
+        NewDeclarationLineViewController *destination = [segue destinationViewController];
+        
+        NSIndexPath *index = [self.tableView indexPathForSelectedRow];
+        destination.declarationLine = [self.declaration.lines objectAtIndex:index.row];
+
+        if(self.state == NEW)
+        {
+            destination.state = EDIT;
+        }
+        else
+        {
+            destination.state = self.state;
+        }
+    }
 }
 @end

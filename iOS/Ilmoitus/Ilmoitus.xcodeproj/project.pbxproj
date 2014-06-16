@@ -146,6 +146,7 @@
 		84BE584E192F7F0D00ECE63A /* DeclarationSubType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeclarationSubType.m; sourceTree = "<group>"; };
 		A273EFC2192BFEF50019B643 /* Attachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Attachment.h; sourceTree = "<group>"; };
 		A273EFC3192BFEF50019B643 /* Attachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Attachment.m; sourceTree = "<group>"; };
+		A276B5A31947B01B00B871BD /* StateType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StateType.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -296,6 +297,7 @@
 				4666E4FC192A476900B6AC3F /* NewDeclarationLineViewController.m */,
 				84BE5844192F54A800ECE63A /* DeclarationTypeController.h */,
 				84BE5845192F54A800ECE63A /* DeclarationTypeController.m */,
+				A276B5A31947B01B00B871BD /* StateType.h */,
 			);
 			path = Ilmoitus;
 			sourceTree = "<group>";

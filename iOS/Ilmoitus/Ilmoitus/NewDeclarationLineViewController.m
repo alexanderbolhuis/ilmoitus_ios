@@ -24,6 +24,9 @@
 @property (weak, nonatomic) IBOutlet UITextField *costField;
 @property (weak, nonatomic) IBOutlet UITextField *costDecimalField;
 @property (weak, nonatomic) IBOutlet UITextField *commentField;
+@property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttonCollection;
+@property (strong, nonatomic) IBOutletCollection(UITextField) NSArray *inputCollection;
+
 @property (nonatomic) UIDatePicker *datePicker;
 @property (nonatomic) UIPickerView *typePicker;
 @property (nonatomic) UIPickerView *subTypePicker;
@@ -36,15 +39,6 @@
 @end
 
 @implementation NewDeclarationLineViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -115,36 +109,100 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)viewDidLoad
+-(void)reloadLineData
+{
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
+    
+    if(self.declarationLine == nil)
+    {
+        NSDate *date = [NSDate date];
+        [dateFormat setDateFormat:@"dd-MM-yyyy"];
+        NSString *dateString = [dateFormat stringFromDate:date];
+        [dateFormat setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss.S"];
+        self.declarationLine = [[DeclarationLine alloc] init];
+        self.declarationLine.date = [dateFormat stringFromDate:date];
+        
+        self.dateField.text = dateString;
+    }
+    else
+    {
+        NSDate *date =[[NSDate alloc]init];
+        [dateFormat setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss.S"];
+        date = [dateFormat dateFromString:self.declarationLine.date];
+        [dateFormat setDateFormat:@"dd-MM-yyyy"];
+        
+        self.dateField.text = [dateFormat stringFromDate:date];
+        self.commentField.text = self.declarationLine.description;
+        int intCost = floorf(self.declarationLine.cost);
+        int decimal = roundf(((self.declarationLine.cost - intCost)*100));
+        self.costField.text = [NSString stringWithFormat:@"%d", intCost];
+        self.costDecimalField.text = [NSString stringWithFormat:@"%02d", decimal];
+        self.typeField.text = self.declarationLine.type.mainTypeName;
+        self.subtypeField.text = self.declarationLine.subtype.subTypeName;
+        [self downLoadSubTypes:self.declarationLine.type.ident];
+    }
+}
+
+-(void)setModus:(StateType)state
+{
+    switch (state) {
+        case EDIT:
+            [self setModusEdit];
+            break;
+        case VIEW:
+            [self setModusView];
+            break;
+        default:
+            [self setModusNew];
+            break;
+    }
+}
+
+-(void)setModusNew
+{
+    [self setupImagePicker];
+    [self setupInputFields];
+    [self setupPickers];
+    self.add.titleLabel.text = @"Toevoegen";
+    self.title = @"declaratie regel maken";
+}
+
+-(void)setModusEdit
+{
+    [self setModusNew];
+    self.add.titleLabel.text = @"Updaten";
+    self.title = @"declaratie regel aanpassen";
+}
+
+-(void)setModusView
+{
+    self.title =@"declaratie regel inzien";
+    [self tearDownInput];
+}
+
+-(void) tearDownInput
+{
+    for (UIButton *button in self.buttonCollection)
+    {
+        button.hidden = true;
+    }
+    for(UITextField *input in self.inputCollection)
+    {
+        input.enabled = false;
+    }
+}
+
+-(void)setupImagePicker
 {
     imagePicker = [[UIImagePickerController alloc]init];
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    imagePicker.delegate = self;
+}
+
+-(void)setupPickers
+{
     self.dateField.delegate = self;
-    self.costField.delegate = self;
     self.typeField.delegate = self;
     self.subtypeField.delegate = self;
-    self.costField.keyboardType = UIKeyboardTypeNumberPad;
-    self.costDecimalField.delegate = self;
-    self.costDecimalField.keyboardType = UIKeyboardTypeNumberPad;
-    self.commentField.delegate = self;
-    [self.commentField setReturnKeyType: UIReturnKeyDone];
-    imagePicker.delegate = self;
-    NSDate *date = [NSDate date];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc]init];
-    [dateFormat setDateFormat:@"dd-MM-yyyy"];
-    NSString *dateString = [dateFormat stringFromDate:date];
-    self.dateField.text = dateString;
-    [dateFormat setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss.S"];
-    self.declarationLine = [[DeclarationLine alloc] init];
-    self.declarationLine.date = [dateFormat stringFromDate:date];
-    
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
-                                   initWithTarget:self
-                                   action:@selector(dismissKeyboard)];
-    
-    [self.view addGestureRecognizer:tap];
-    
     // Create date picker
     self.datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 44, 0, 0)];
     self.datePicker.datePickerMode = UIDatePickerModeDate;
@@ -216,6 +274,33 @@
     [subTypeBarItems addObject:cancelSubTypeBtn];
     
     [self.subTypePickerToolbar setItems:subTypeBarItems animated:YES];
+}
+
+-(void)setupInputFields
+{
+    self.costField.delegate = self;
+    self.costField.keyboardType = UIKeyboardTypeNumberPad;
+    self.costDecimalField.delegate = self;
+    self.costDecimalField.keyboardType = UIKeyboardTypeNumberPad;
+    self.commentField.delegate = self;
+    [self.commentField setReturnKeyType: UIReturnKeyDone];
+}
+
+- (void)viewDidLoad
+{
+    
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
+    
+    [self setModus:self.state];
+    [self reloadLineData];
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -296,7 +381,7 @@
         [self.pickerViewPopup addSubview:self.typePicker];
         [self.pickerViewPopup showInView:self.view];
         [self.pickerViewPopup setBounds:CGRectMake(0,0,320, 464)];
-
+        
     } else if (textField == self.subtypeField) {
         [self.subtypeField resignFirstResponder];
         self.pickerViewPopup = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
@@ -304,6 +389,19 @@
         [self.pickerViewPopup addSubview:self.subTypePicker];
         [self.pickerViewPopup showInView:self.view];
         [self.pickerViewPopup setBounds:CGRectMake(0,0,320, 464)];
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    if(textField == self.costField) {
+        if(![self.costDecimalField.text isEqualToString:@""] && ![self.costField.text isEqualToString:@""]) {
+            [self checkMaxCost];
+        }
+    } else if (textField == self.costDecimalField) {
+        if(![self.costField.text isEqualToString:@""] && ![self.costDecimalField.text isEqualToString:@""]) {
+            [self checkMaxCost];
+        }
     }
 }
 
@@ -356,6 +454,7 @@
     int selected = [self.typePicker selectedRowInComponent:0];
     DeclarationType *type = [self.typeList objectAtIndex:selected];
     self.typeField.text = type.mainTypeName;
+    self.declarationLine.type = type;
     [self downLoadSubTypes:type.ident];
     [self.pickerViewPopup dismissWithClickedButtonIndex:1 animated:YES];
 }
@@ -371,6 +470,7 @@
     DeclarationSubType *subtype = [self.subTypeList objectAtIndex:selected];
     self.subtypeField.text = subtype.subTypeName;
     self.declarationLine.subtype = subtype;
+    [self checkMaxCost];
     [self.pickerViewPopup dismissWithClickedButtonIndex:1 animated:YES];
 }
 
@@ -381,79 +481,107 @@
 
 - (void)downLoadMainTypes
 {
-    NSMutableArray *declarationsTypesFound = [[NSMutableArray alloc] init];
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
-    NSString *url = [NSString stringWithFormat:@"%@/declarationtypes", baseURL];
-    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSError* error;
-         NSDictionary* json = [NSJSONSerialization
-                               JSONObjectWithData:responseObject
-                               
-                               options:kNilOptions
-                               error:&error];
-         for (NSDictionary *decl in json)
+    if(self.state!=VIEW)
+    {
+        NSMutableArray *declarationsTypesFound = [[NSMutableArray alloc] init];
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+        NSString *url = [NSString stringWithFormat:@"%@/declarationtypes", baseURL];
+        [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
          {
-             DeclarationType *declarationType = [[DeclarationType alloc] init];
-             declarationType.ident = [decl[@"id"] longLongValue];
-             declarationType.mainTypeName = decl[@"name"];
-             [declarationsTypesFound addObject:declarationType];
+             NSError* error;
+             NSDictionary* json = [NSJSONSerialization
+                                   JSONObjectWithData:responseObject
+                                   
+                                   options:kNilOptions
+                                   error:&error];
+             for (NSDictionary *decl in json)
+             {
+                 DeclarationType *declarationType = [[DeclarationType alloc] init];
+                 declarationType.ident = [decl[@"id"] longLongValue];
+                 declarationType.mainTypeName = decl[@"name"];
+                 [declarationsTypesFound addObject:declarationType];
+             }
+             
+             NSLog(@"GET request success response for all declarations: %@", json);
+             self.typeList = declarationsTypesFound;
+             [self.typePicker reloadAllComponents];
          }
-         
-         NSLog(@"GET request success response for all declarations: %@", json);
-         self.typeList = declarationsTypesFound;
-         [self.typePicker reloadAllComponents];
-     }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error)
-     {
-         NSLog(@"GET request Error for all declarations main types: %@", error);
-     }];
+             failure:^(AFHTTPRequestOperation *operation, NSError *error)
+         {
+             NSLog(@"GET request Error for all declarations main types: %@", error);
+         }];
+    }
 }
 
 - (void)downLoadSubTypes:(int64_t)mainTpyeId
 {
-    NSString *combinedURL = [NSString stringWithFormat:@"%@%@%lld", baseURL, @"/declarationtype/", mainTpyeId];
-    NSMutableArray *declarationsSubTypesFound = [[NSMutableArray alloc] init];
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
-    [manager GET:combinedURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
-     {
-         NSError* error;
-         NSDictionary* json = [NSJSONSerialization
-                               JSONObjectWithData:responseObject
-                               
-                               options:kNilOptions
-                               error:&error];
-         
-         
-         for (NSDictionary *decl in json)
+    if(self.state != VIEW)
+    {
+        NSString *combinedURL = [NSString stringWithFormat:@"%@%@%lld", baseURL, @"/declarationtype/", mainTpyeId];
+        NSMutableArray *declarationsSubTypesFound = [[NSMutableArray alloc] init];
+        
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+        [manager GET:combinedURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
          {
-             DeclarationSubType *declarationSubType = [[DeclarationSubType alloc] init];
-             declarationSubType.ident = [decl[@"id"] longLongValue];
-             declarationSubType.subTypeName = decl[@"name"];
-             declarationSubType.subTypeDescription = decl[@"declarationType"];
-             declarationSubType.subTypeMaxCost = [decl[@"max_cost"] floatValue];
-             [declarationsSubTypesFound addObject:declarationSubType];
+             NSError* error;
+             NSDictionary* json = [NSJSONSerialization
+                                   JSONObjectWithData:responseObject
+                                   
+                                   options:kNilOptions
+                                   error:&error];
+             
+             
+             for (NSDictionary *decl in json)
+             {
+                 DeclarationSubType *declarationSubType = [[DeclarationSubType alloc] init];
+                 declarationSubType.ident = [decl[@"id"] longLongValue];
+                 declarationSubType.subTypeName = decl[@"name"];
+                 declarationSubType.subTypeDescription = decl[@"declarationType"];
+                 declarationSubType.subTypeMaxCost = [decl[@"max_cost"] floatValue];
+                 [declarationsSubTypesFound addObject:declarationSubType];
+             }
+             
+             NSLog(@"GET request success response for all declarations sub types: %@", json);
+             self.subTypeList = declarationsSubTypesFound;
+             [self.subTypePicker reloadAllComponents];
          }
-         
-         NSLog(@"GET request success response for all declarations sub types: %@", json);
-         self.subTypeList = declarationsSubTypesFound;
-         [self.subTypePicker reloadAllComponents];
-     }
-         failure:^(AFHTTPRequestOperation *operation, NSError *error)
-     {
-         NSLog(@"GET request Error for all declarations: %@", error);
-     }];
+             failure:^(AFHTTPRequestOperation *operation, NSError *error)
+         {
+             NSLog(@"GET request Error for all declarations: %@", error);
+         }];
+    }
+}
+
+- (void)checkMaxCost
+{
+    if (![self.costField.text isEqualToString:@""] && ![self.costDecimalField.text isEqualToString:@""] && self.declarationLine.subtype.subTypeMaxCost != 0.00)
+    {
+        float maxCost = self.declarationLine.subtype.subTypeMaxCost;
+        float selectedCost = [self.costField.text intValue] + ([self.costDecimalField.text intValue]/100);
+        
+        if(selectedCost != 0.00){
+            
+            if (maxCost < selectedCost) {
+                NSString *errorString = [NSString stringWithFormat:@"De maximum kosten voor dit type zijn %0.2f", maxCost];
+                [self showErrorMessage:@"Maximum kosten" :errorString];
+                self.costField.text = @"";
+                self.costDecimalField.text = @"";
+            }
+        } else {
+            [self showErrorMessage:@"Ongeldig bedrag" :@"Het ingevoerde bedrag is ongeldig"];
+        }
+        
+    }
 }
 
 
-- (void) showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
+- (void)showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle
                                                     message:errorMessage
