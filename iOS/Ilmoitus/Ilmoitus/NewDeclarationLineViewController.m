@@ -66,7 +66,8 @@
         [dateFormat setDateFormat:@"yyyy-MM-dd' 'HH:mm:ss.S"];
         date = [dateFormat dateFromString:self.declarationLine.date];
         [dateFormat setDateFormat:@"dd-MM-yyyy"];
-        
+        NSString *dateString = [dateFormat stringFromDate:date];
+        self.dateField.text = dateString;
         self.commentField.text = self.declarationLine.comment;
         int intCost = floorf(self.declarationLine.cost);
         int decimal = roundf(((self.declarationLine.cost - intCost)*100));
