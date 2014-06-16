@@ -8,6 +8,7 @@
 
 #import "NewDeclarationViewController.h"
 #import "NewDeclarationLineViewController.h"
+#import "NewAttachmentViewController.h"
 #import "Declaration.h"
 #import "DeclarationLine.h"
 #import "Supervisor.h"
@@ -19,7 +20,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
 @property (nonatomic) NSMutableArray *supervisorList;
 @property (weak, nonatomic) IBOutlet UITextView *comment;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UITableView *declarationLineTable;
+@property (weak, nonatomic) IBOutlet UITableView *attachmentTable;
 @property (nonatomic) UIPickerView * pktStatePicker;
 @property (nonatomic) UIToolbar *mypickerToolbar;
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
@@ -57,8 +59,10 @@
     self.supervisor.delegate = self;
     [self.comment setReturnKeyType: UIReturnKeyDone];
     self.comment.delegate = self;
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
+    self.declarationLineTable.delegate = self;
+    self.declarationLineTable.dataSource = self;
+    self.attachmentTable.delegate = self;
+    self.attachmentTable.dataSource = self;
     
     [self getSupervisorList];
     
@@ -76,12 +80,12 @@
         {
             button.hidden = YES;
         }
-
+        
     }
-
+    
     [self declarationLinesChanged];
     self.comment.text = self.declaration.comment;
-
+    
     
     // Textfield delegates
     self.supervisor.delegate = self;
@@ -95,9 +99,9 @@
     self.comment.clipsToBounds = YES;
     
     [self.supervisor addTarget:self
-                    action:@selector(textFieldDidChange)
-          forControlEvents:UIControlEventEditingChanged];
-
+                        action:@selector(textFieldDidChange)
+              forControlEvents:UIControlEventEditingChanged];
+    
     [self createSupervisorPicker];
 }
 
@@ -153,40 +157,65 @@
 
 -(IBAction)unwindToNewDeclaration:(UIStoryboardSegue *)segue
 {
-    NewDeclarationLineViewController * source = [segue sourceViewController];
-    switch (source.state)
+    if([[segue sourceViewController] isKindOfClass: [NewDeclarationLineViewController class]])
     {
-        case NEW:
-            if(source.declarationLine != nil)
-            {
-                [self.declaration.lines addObject:source.declarationLine];
-                [self declarationLinesChanged];
-            }
-            break;
-        case EDIT:
-            if(source.declarationLine!=nil)
-            {
-                NSIndexPath *index = [self.tableView indexPathForSelectedRow];
-                [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
-                [self declarationLinesChanged];
-            }
-            else
-            {
-                [self.declaration.lines removeObjectAtIndex:[self.tableView indexPathForSelectedRow].row];
-                [self declarationLinesChanged];
-            }
-            break;
-            
-        default:
-            break;
+        NewDeclarationLineViewController * source = [segue sourceViewController];
+        switch (source.state)
+        {
+            case NEW:
+                if(source.declarationLine != nil)
+                {
+                    [self.declaration.lines addObject:source.declarationLine];
+                    [self declarationLinesChanged];
+                }
+                break;
+            case EDIT:
+                if(source.declarationLine!=nil)
+                {
+                    NSIndexPath *index = [self.declarationLineTable indexPathForSelectedRow];
+                    [self.declaration.lines replaceObjectAtIndex:index.row withObject:source.declarationLine];
+                    [self declarationLinesChanged];
+                }
+                else
+                {
+                    [self.declaration.lines removeObjectAtIndex:[self.declarationLineTable indexPathForSelectedRow].row];
+                    [self declarationLinesChanged];
+                }
+                break;
+                
+            default:
+                break;
+        }
     }
-    if(source.declarationLine != nil)
+    else if([[segue sourceViewController] isKindOfClass:[NewAttachmentViewController class]])
     {
-        [self.declaration.lines addObject:source.declarationLine];
-    }
-    if(source.attachment != nil)
-    {
-        [self.declaration.attachments addObject:source.attachment];
+        NewAttachmentViewController * source = [segue sourceViewController];
+        switch (source.state)
+        {
+            case NEW:
+                if(source.attachment != nil)
+                {
+                    [self.declaration.attachments addObject:source.attachment];
+                    [self attachmentsChanged];
+                }
+                break;
+            case EDIT:
+                if(source.attachment!=nil)
+                {
+                    NSIndexPath *index = [self.attachmentTable indexPathForSelectedRow];
+                    [self.declaration.attachments replaceObjectAtIndex:index.row withObject:source.attachment];
+                    [self attachmentsChanged];
+                }
+                else
+                {
+                    [self.declaration.attachments removeObjectAtIndex:[self.attachmentTable indexPathForSelectedRow].row];
+                    [self attachmentsChanged];
+                }
+                break;
+                
+            default:
+                break;
+        }
     }
 }
 
@@ -456,7 +485,15 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.declaration.lines count];
+    if(tableView == self.declarationLineTable)
+    {
+        return [self.declaration.lines count];
+    }
+    else if(tableView == self.attachmentTable)
+    {
+        return [self.declaration.attachments count];
+    }
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -466,36 +503,68 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"DeclarationLineCell";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil)
+    UITableViewCell *cell = nil;
+    if(tableView == self.declarationLineTable)
     {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        static NSString *CellIdentifier = @"DeclarationLineCell";
+        
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        }
+        
+        DeclarationLine *line = [self.declaration.lines objectAtIndex:indexPath.row];
+        
+        UILabel *label = (UILabel *)[cell viewWithTag:1];
+        UILabel *subTypelabel = (UILabel *)[cell viewWithTag:2];
+        NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+        formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
+        NSDate *date = [formatter dateFromString:line.date];
+        
+        [formatter setDateFormat:@"dd-MM-yyyy"];
+        NSString *dateString = [formatter stringFromDate:date];
+        
+        label.text = [NSString stringWithFormat:@"%@ - €%.02f", dateString, line.cost];
+        subTypelabel.text = [NSString stringWithFormat:@"%@", line.subtype.subTypeName];
+        
+        return cell;
     }
     
-    DeclarationLine *line = [self.declaration.lines objectAtIndex:indexPath.row];
-    
-    UILabel *label = (UILabel *)[cell viewWithTag:1];
-    UILabel *subTypelabel = (UILabel *)[cell viewWithTag:2];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
-    NSDate *date = [formatter dateFromString:line.date];
-    
-    [formatter setDateFormat:@"dd-MM-yyyy"];
-    NSString *dateString = [formatter stringFromDate:date];
-    
-    label.text = [NSString stringWithFormat:@"%@ - €%.02f", dateString, line.cost];
-    subTypelabel.text = [NSString stringWithFormat:@"%@", line.subtype.subTypeName];
+    else if(tableView == self.attachmentTable)
+    {
+        static NSString *CellIdentifier = @"AttachmentCell";
+        
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil)
+        {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        }
+        
+        Attachment *attachment = [self.declaration.attachments objectAtIndex:indexPath.row];
+        
+        UILabel *label = (UILabel *)[cell viewWithTag:1];
+        
+        label.text = attachment.name;
+        
+    }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [self.declaration.lines removeObjectAtIndex:indexPath.row];
+        if(tableView == self.declarationLineTable)
+        {
+            [self.declaration.lines removeObjectAtIndex:indexPath.row];
+            [self setTotalPrice];
+        }
+        else if(tableView == self.attachmentTable)
+        {
+            [self.declaration.attachments removeObjectAtIndex:indexPath.row];
+        }
+        
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-        [self setTotalPrice];
     }
 }
 
@@ -515,12 +584,18 @@
 {
     [self declarationLinesChanged];
     [self setTotalPrice];
+    [self attachmentsChanged];
     self.comment.text = self.declaration.comment;
+}
+
+-(void)attachmentsChanged
+{
+    [self.attachmentTable reloadData];
 }
 
 -(void)declarationLinesChanged
 {
-    [self.tableView reloadData];
+    [self.declarationLineTable reloadData];
     [self setTotalPrice];
 }
 
@@ -528,7 +603,7 @@
 {
     NSString* formattedAmount = [NSString stringWithFormat:@"%.2f", self.declaration.calculateTotalPrice];
     self.totalPrice.text = [NSString stringWithFormat:@"Totaal bedrag: €%@", formattedAmount];
-
+    
 }
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
@@ -537,9 +612,9 @@
     {
         NewDeclarationLineViewController *destination = [segue destinationViewController];
         
-        NSIndexPath *index = [self.tableView indexPathForSelectedRow];
+        NSIndexPath *index = [self.declarationLineTable indexPathForSelectedRow];
         destination.declarationLine = [self.declaration.lines objectAtIndex:index.row];
-
+        
         if(self.state == NEW)
         {
             destination.state = EDIT;
@@ -549,5 +624,22 @@
             destination.state = self.state;
         }
     }
+    if([[segue identifier] isEqualToString:@"viewAttachment"])
+    {
+        NewAttachmentViewController *destination = [segue destinationViewController];
+        
+        NSIndexPath *index = [self.attachmentTable indexPathForSelectedRow];
+        destination.attachment = [self.declaration.attachments objectAtIndex:index.row];
+        
+        if(self.state == NEW)
+        {
+            destination.state = EDIT;
+        }
+        else
+        {
+            destination.state = self.state;
+        }
+    }
+    
 }
 @end
