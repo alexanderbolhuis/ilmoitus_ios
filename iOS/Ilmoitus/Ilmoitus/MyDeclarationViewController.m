@@ -71,7 +71,8 @@
             Declaration *declaration = [[Declaration alloc] init];
             declaration.ident = [decl[@"id" ] longLongValue];
             declaration.status = decl[@"state"];
-            
+            NSNumber *assigned = [NSNumber numberWithLongLong:[decl[@"assigned_to"][0] longLongValue]];
+            [declaration.assignedTo addObject:assigned];
             declaration.itemsCount = [decl[@"items_count"] intValue];
             declaration.itemsTotalPrice = [decl[@"items_total_price"] floatValue];
             NSDateFormatter *formatter = [NSDateFormatter new];
@@ -170,6 +171,8 @@
         dec.ident = [json[@"id"] longLongValue];
         dec.comment = json[@"comment"];
         dec.createdAt = json[@"created_at"];
+        NSNumber *assigned = [NSNumber numberWithLongLong:[json[@"assigned_to"][0] longLongValue]];
+        [dec.assignedTo addObject:assigned];
         dec.itemsCount = [json[@"items_count"] intValue];
         dec.itemsTotalPrice = [json[@"items_total_price"] floatValue];
         dec.status = json[@"state"];
@@ -185,7 +188,7 @@
             
             DeclarationSubType *declarationSubType = [[DeclarationSubType alloc]init];
             NSDictionary *declarationSubTypeDict = line[@"declaration_sub_type"];
-            declarationSubType.ident = [line[@"id"] longLongValue];
+            declarationSubType.ident = [declarationSubTypeDict[@"id"] longLongValue];
             declarationSubType.subTypeName = declarationSubTypeDict[@"name"];
             foundLine.subtype = declarationSubType;
             
