@@ -10,7 +10,7 @@
 #import "DeclarationLine.h"
 #import "StateType.h"
 
-@interface NewDeclarationLineViewController : UIViewController <UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
+@interface NewDeclarationLineViewController : UIViewController <UITextFieldDelegate, UIPickerViewDelegate>
 
 -(void)setModus:(StateType)state;
 

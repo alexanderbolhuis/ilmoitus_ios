@@ -67,19 +67,21 @@
     [self getSupervisorList];
     
     if (_declaration == nil) {
-        self.title = @"Declaratie Aanmaken";
+        [self.navigationItem setTitle:@"Declaratie aanmaken"];
     }
     else if(self.state == EDIT)
     {
-        self.title = @"Declaratie Aanpassen";
+        [self.navigationItem setTitle:@"Declaratie aanpassen"];
     }
     else
     {
-        self.title = @"Declaratie Bekijken";
+        [self.navigationItem setTitle:@"Declaratie bekijken"];
         for (UIButton *button in self.buttons)
         {
             button.hidden = YES;
         }
+        self.supervisor.enabled = NO;
+        self.comment.editable = NO;
         
     }
     
@@ -219,6 +221,50 @@
     }
 }
 
+-(void)getAttachmentToken:(Attachment *)att
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    NSString *url = [NSString stringWithFormat:@"%@/attachment_token/%lld", baseURL, att.ident];
+    NSLog(@"%@", url);
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSError* error;
+        NSDictionary* json = [NSJSONSerialization
+                              JSONObjectWithData:responseObject
+                              
+                              options:kNilOptions
+                              error:&error];
+        
+        NSLog(@"JSON response: %@", json);
+        
+        NSString *token = json[@"attachment_token"];
+        [self downloadAttachment:token :att];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error while getting attachment token: %@", error);
+    }];
+    
+}
+
+-(void)downloadAttachment:(NSString *)token :(Attachment *)att
+{
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:att.name];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSString *url = [NSString stringWithFormat:@"%@/attachment/%lld/%@", baseURL, att.ident, token];
+    AFHTTPRequestOperation *op = [manager GET:url
+                                   parameters:nil
+                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                                          NSLog(@"successful download to %@", path);
+                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                          NSLog(@"Error: %@", error);
+                                      }];
+    [op setResponseSerializer:[AFHTTPResponseSerializer serializer]];
+    op.outputStream = [NSOutputStream outputStreamToFileAtPath:path append:NO];
+}
+
 -(void)textFieldDidChange
 {
     NSLog( @"Supervisor TextField changed: %@", self.supervisor.text);
@@ -277,7 +323,11 @@
 
 - (IBAction)cancelDeclaration:(id)sender
 {
-    [self clearView];
+    if (self.state == EDIT){
+        [self deleteDeclaration];
+    } else {
+        [self clearView];
+    }
 }
 
 - (void)clearView {
@@ -295,63 +345,65 @@
 {
     if(self.state == VIEW)
     {
-        //TODO error?
         return;
-    }
-    
-    self.declaration.createdBy = [[[NSUserDefaults standardUserDefaults] stringForKey:@"person_id"] longLongValue];
-    self.declaration.className = @"open_declaration";
-    self.declaration.status = @"Open";
-    
-    Declaration *decl = self.declaration;
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
-    
-    // Lines
-    NSMutableArray *declarationlines = [[NSMutableArray alloc] init];
-    for (DeclarationLine *line in decl.lines)
-    {
-        NSDictionary *currentline = @{@"receipt_date": line.date, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
-        [declarationlines addObject:currentline];
-    }
-    
-    // Attachments
-    NSMutableArray *attachments = [[NSMutableArray alloc] init];
-    for (Attachment *attachment in self.declaration.attachments)
-    {
-        NSDictionary *currentAttachment = @{@"name":attachment.name, @"file":attachment.data};
-        [attachments addObject:currentAttachment];
-    }
-    
-    // Declaration
-    NSDictionary *declaration = @{@"state":decl.status, @"created_by":[NSNumber numberWithLongLong:decl.createdBy], @"supervisor":[decl.assignedTo firstObject], @"comment":decl.comment, @"items_total_price":[NSNumber numberWithFloat:decl.itemsTotalPrice], @"items_count":[NSNumber numberWithInt:decl.itemsCount], @"lines":declarationlines, @"attachments":attachments};
-    
-    
-    // Total dict
-    NSDictionary *params = @{@"declaration":declaration};
-    
-    NSLog(@"JSON data that is going to be saved/sent: %@",params);
-    
-    NSString *url = [NSString stringWithFormat:@"%@/declaration", baseURL];
-    AFHTTPRequestOperation *apiRequest = [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError* error;
-        NSDictionary* json = [NSJSONSerialization
-                              JSONObjectWithData:responseObject
-                              
-                              options:kNilOptions
-                              error:&error];
-        //[self clearView];
-        NSLog(@"JSON response data for saving declaration: %@",json);
-        // Handle success
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
-        // Handle error
+    } else if (self.state == EDIT) {
+        [self editDeclaration];
+    } else {
         
-    }];
-    
-    [apiRequest start];
+        self.declaration.createdBy = [[[NSUserDefaults standardUserDefaults] stringForKey:@"person_id"] longLongValue];
+        self.declaration.className = @"open_declaration";
+        self.declaration.status = @"Open";
+        
+        Declaration *decl = self.declaration;
+        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+        
+        // Lines
+        NSMutableArray *declarationlines = [[NSMutableArray alloc] init];
+        for (DeclarationLine *line in decl.lines)
+        {
+            NSDictionary *currentline = @{@"receipt_date": line.date, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
+            [declarationlines addObject:currentline];
+        }
+        
+        // Attachments
+        NSMutableArray *attachments = [[NSMutableArray alloc] init];
+        for (Attachment *attachment in self.declaration.attachments)
+        {
+            NSDictionary *currentAttachment = @{@"name":attachment.name, @"file":attachment.data};
+            [attachments addObject:currentAttachment];
+        }
+        
+        // Declaration
+        NSDictionary *declaration = @{@"state":decl.status, @"created_by":[NSNumber numberWithLongLong:decl.createdBy], @"supervisor":[decl.assignedTo firstObject], @"comment":decl.comment, @"items_total_price":[NSNumber numberWithFloat:decl.itemsTotalPrice], @"items_count":[NSNumber numberWithInt:decl.itemsCount], @"lines":declarationlines, @"attachments":attachments};
+        
+        
+        // Total dict
+        NSDictionary *params = @{@"declaration":declaration};
+        
+        NSLog(@"JSON data that is going to be saved/sent: %@",params);
+        
+        NSString *url = [NSString stringWithFormat:@"%@/declaration", baseURL];
+        AFHTTPRequestOperation *apiRequest = [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            NSError* error;
+            NSDictionary* json = [NSJSONSerialization
+                                  JSONObjectWithData:responseObject
+                                  
+                                  options:kNilOptions
+                                  error:&error];
+            //[self clearView];
+            NSLog(@"JSON response data for saving declaration: %@",json);
+            // Handle success
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
+            // Handle error
+            
+        }];
+        
+        [apiRequest start];
+    }
 }
 
 -(void)deleteDeclaration
@@ -370,7 +422,7 @@
                               options:kNilOptions
                               error:&error];
         
-        // TODO Navigate back to MyDeclarationView if succesfully deleted
+        [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response: %@", json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -390,7 +442,11 @@
     NSMutableArray *declarationlines = [[NSMutableArray alloc] init];
     for (DeclarationLine *line in decl.lines)
     {
-        NSDictionary *currentline = @{@"receipt_date": line.date, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
+        if (line.comment == nil) {
+            line.comment = @"";
+        }
+        
+        NSDictionary *currentline = @{@"receipt_date": line.date, @"comment":line.comment, @"cost":[NSNumber numberWithFloat:line.cost], @"declaration_sub_type":[NSNumber numberWithLongLong:line.subtype.ident]};
         [declarationlines addObject:currentline];
     }
     
@@ -398,12 +454,17 @@
     NSMutableArray *attachments = [[NSMutableArray alloc] init];
     for (Attachment *attachment in self.declaration.attachments)
     {
-        NSDictionary *currentAttachment = @{@"name":attachment.name, @"file":attachment.data};
-        [attachments addObject:currentAttachment];
+        if (attachment.data != nil) {
+            NSDictionary *currentAttachment = @{@"name":attachment.name, @"file":attachment.data};
+            [attachments addObject:currentAttachment];
+        } else {
+            NSDictionary *currentAttachment = @{@"id":[NSString stringWithFormat:@"%lld", attachment.ident], @"name":attachment.name};
+            [attachments addObject:currentAttachment];
+        }
     }
     
     // Declaration
-    NSDictionary *declaration = @{@"state":decl.status, @"created_by":[NSNumber numberWithLongLong:decl.createdBy], @"supervisor":[decl.assignedTo firstObject], @"comment":decl.comment, @"items_total_price":[NSNumber numberWithFloat:decl.itemsTotalPrice], @"items_count":[NSNumber numberWithInt:decl.itemsCount], @"lines":declarationlines, @"attachments":attachments};
+    NSDictionary *declaration = @{@"state":decl.status, @"supervisor":[decl.assignedTo firstObject], @"comment":decl.comment, @"items_total_price":[NSNumber numberWithFloat:decl.itemsTotalPrice], @"items_count":[NSNumber numberWithInt:decl.itemsCount], @"lines":declarationlines, @"attachments":attachments};
     
     
     // Total dict
@@ -419,8 +480,8 @@
                               
                               options:kNilOptions
                               error:&error];
-
-        // TODO Navigate back to MyDeclarationView if succesfully edited
+        
+        [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response data for saving declaration: %@",json);
         // Handle success
@@ -638,6 +699,7 @@
         else
         {
             destination.state = self.state;
+            [self getAttachmentToken:destination.attachment];
         }
     }
     

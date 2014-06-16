@@ -88,6 +88,9 @@
                     <tabBarItem key="tabBarItem" title="Indienen" id="Irb-Oe-ylH"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZpI-zp-ZNi">
                         <autoresizingMask key="autoresizingMask"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textAttributes>
                     </navigationBar>
                     <connections>
                         <segue destination="QUy-BD-bpt" kind="relationship" relationship="rootViewController" id="Bl9-4L-OI8"/>
@@ -318,6 +321,7 @@
                         <outletCollection property="buttons" destination="hbl-Nf-RY0" id="8In-PG-MLV"/>
                         <outletCollection property="buttons" destination="tRX-PM-77D" id="pfV-xo-gVw"/>
                         <outletCollection property="buttons" destination="QeA-Fl-gNj" id="HWc-1I-Ide"/>
+                        <outletCollection property="buttons" destination="4PO-Vp-36H" id="1lk-iX-hIH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3qq-4t-Ow8" sceneMemberID="firstResponder"/>
@@ -397,7 +401,6 @@
                         <outlet property="image" destination="wme-Ri-NON" id="vKG-Vl-tsR"/>
                         <outlet property="select" destination="aCn-9d-2xc" id="aJM-st-B6x"/>
                         <outletCollection property="buttonCollection" destination="oAn-ZP-twK" id="kxF-xu-eJI"/>
-                        <outletCollection property="buttonCollection" destination="aCn-9d-2xc" id="wxD-1R-SRp"/>
                         <outletCollection property="buttonCollection" destination="jT3-9J-AVe" id="T0a-Kc-PEl"/>
                     </connections>
                 </viewController>

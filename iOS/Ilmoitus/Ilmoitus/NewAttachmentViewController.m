@@ -30,6 +30,14 @@
     self.image.image = self.attachment.image;
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:self.attachment.name];
+    self.image.image = [UIImage imageWithContentsOfFile:path];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -51,7 +59,28 @@
 }
 
 - (IBAction)addAttachment:(id)sender {
-    [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Close" destructiveButtonTitle:nil otherButtonTitles:@"Choose existing", @"Create new",  nil]showInView:self.view];
+    NSLog(@"%@", self.attachment.name);
+    
+    if(![self.attachment.name isEqualToString:@""] && self.attachment != nil && self.state != NEW ){
+        [self openAttachmentFile:self.attachment.name];
+    } else {
+        [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Close" destructiveButtonTitle:nil otherButtonTitles:@"Choose existing", @"Create new",  nil]showInView:self.view];
+    }
+}
+
+- (UIViewController *)documentInteractionControllerViewControllerForPreview:(UIDocumentInteractionController *)controller{
+    return self;
+}
+
+-(void)openAttachmentFile:(NSString *)filename
+{
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:filename];
+    self.documentInteractionController = [UIDocumentInteractionController interactionControllerWithURL:[NSURL fileURLWithPath:path]];
+    
+    // Configure Document Interaction Controller
+    [self.documentInteractionController setDelegate:self];
+    
+    [self.documentInteractionController presentOptionsMenuFromRect:self.view.frame inView:self.view animated:YES];
 }
 
 -(void)addAttachmentFromPhotoLibrary
@@ -98,7 +127,14 @@
     self.attachment = [[Attachment alloc]init];
     self.attachment.image = image;
     [self.attachment SetAttachmentDataFromImage:image];
-    self.attachment.name = [imageURL path];
+    
+    NSString *pathname = [[imageURL path] stringByReplacingOccurrencesOfString:@"/" withString:@""];
+    NSString *name = [NSString stringWithFormat:@"%i%@", (arc4random() % 999), pathname];
+    self.attachment.name = name;
+    
+    NSData* imageData = UIImageJPEGRepresentation(image, 1.0);
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:self.attachment.name];
+    [imageData writeToFile:path atomically:NO];
     
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -128,13 +164,25 @@
 -(void)setModusEdit
 {
     [self setModusNew];
-    self.add.titleLabel.text = @"Updaten";
-    self.title = @"attachment aanpassen";
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateNormal];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateHighlighted];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateDisabled];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateSelected];
+    
+    [self.add setTitle:@"Updaten" forState:UIControlStateNormal];
+    [self.add setTitle:@"Updaten" forState:UIControlStateHighlighted];
+    [self.add setTitle:@"Updaten" forState:UIControlStateDisabled];
+    [self.add setTitle:@"Updaten" forState:UIControlStateSelected];
+    self.title = @"Bijlage aanpassen";
 }
 
 -(void)setModusView
 {
-    self.title =@"attachment bekijken";
+    self.title =@"Bijlage bekijken";
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateNormal];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateHighlighted];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateDisabled];
+    [self.select setTitle:@"Bijlage openen" forState:UIControlStateSelected];
     [self tearDownInput];
 }
 

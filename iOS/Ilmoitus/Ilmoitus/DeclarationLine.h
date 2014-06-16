@@ -16,6 +16,8 @@
 @property (nonatomic) float cost;
 @property (nonatomic, strong) DeclarationSubType *subtype;
 @property (nonatomic, strong) DeclarationType *type;
-@property (nonatomic, strong) NSString *description;
+@property (nonatomic, strong) NSString *comment;
+//@property (nonatomic, strong) NSString *description;
+
 
 @end

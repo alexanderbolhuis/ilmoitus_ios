@@ -71,7 +71,8 @@
             Declaration *declaration = [[Declaration alloc] init];
             declaration.ident = [decl[@"id" ] longLongValue];
             declaration.status = decl[@"state"];
-            
+            NSNumber *assigned = [NSNumber numberWithLongLong:[decl[@"assigned_to"][0] longLongValue]];
+            [declaration.assignedTo addObject:assigned];
             declaration.itemsCount = [decl[@"items_count"] intValue];
             declaration.itemsTotalPrice = [decl[@"items_total_price"] floatValue];
             NSDateFormatter *formatter = [NSDateFormatter new];
@@ -170,6 +171,8 @@
         dec.ident = [json[@"id"] longLongValue];
         dec.comment = json[@"comment"];
         dec.createdAt = json[@"created_at"];
+        NSNumber *assigned = [NSNumber numberWithLongLong:[json[@"assigned_to"][0] longLongValue]];
+        [dec.assignedTo addObject:assigned];
         dec.itemsCount = [json[@"items_count"] intValue];
         dec.itemsTotalPrice = [json[@"items_total_price"] floatValue];
         dec.status = json[@"state"];
@@ -182,10 +185,15 @@
             DeclarationLine *foundLine = [[DeclarationLine alloc]init];
             foundLine.cost = [line[@"cost"] floatValue];
             foundLine.date = line[@"receipt_date"];
+            if (line[@"comment"] != nil && ![line[@"comment"]isEqual:[NSNull null]]) {
+                foundLine.comment = line[@"comment"];
+            } else {
+                foundLine.comment = @"";
+            }
             
             DeclarationSubType *declarationSubType = [[DeclarationSubType alloc]init];
             NSDictionary *declarationSubTypeDict = line[@"declaration_sub_type"];
-            declarationSubType.ident = [line[@"id"] longLongValue];
+            declarationSubType.ident = [declarationSubTypeDict[@"id"] longLongValue];
             declarationSubType.subTypeName = declarationSubTypeDict[@"name"];
             foundLine.subtype = declarationSubType;
             
@@ -196,23 +204,19 @@
             foundLine.type = declarationType;
             
             [lines addObject:foundLine];
-            //TODO DeclarationType
         }
         dec.lines = lines;
         
-        //TODO Attachments ophalen
-        NSMutableArray *attachments = [[NSMutableArray alloc]init];
-        for(NSDictionary *attachment in json[@"attachments"])
+        NSMutableArray *attachments = [[NSMutableArray alloc] init];
+        for (NSDictionary *attachment in json[@"attachments"])
         {
-            Attachment *foundAttachment = [[Attachment alloc]init];
-            foundAttachment.ident = [attachment[@"id"]longLongValue];
-            foundAttachment.name = attachment[@"name"];
-            [attachments addObject:foundAttachment];
+            Attachment *foundAtt = [[Attachment alloc]init];
+            foundAtt.ident = [attachment[@"id"] longLongValue];
+            foundAtt.name = attachment[@"name"];
+            
+            [attachments addObject:foundAtt];
         }
-        dec.attachments = attachments;	
-        
-
-        
+        dec.attachments = attachments;
         
         destination.declaration = dec;
         NSLog(@"GET request SUCCES for specific declaration: %@", json);
