@@ -117,7 +117,6 @@
                 [[NSUserDefaults standardUserDefaults] setObject:json[@"employee_number"] forKey:@"person_employee_number"];
                 [[NSUserDefaults standardUserDefaults] setObject:json[@"email"] forKey:@"person_email"];
                 [[NSUserDefaults standardUserDefaults] setObject:json[@"supervisor"] forKey:@"supervisor"];
-                // TODO Department
                 
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 

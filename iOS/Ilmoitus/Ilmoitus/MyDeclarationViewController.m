@@ -219,6 +219,7 @@
         dec.attachments = attachments;
         
         destination.declaration = dec;
+        [destination getSupervisorList];
         NSLog(@"GET request SUCCES for specific declaration: %@", json);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

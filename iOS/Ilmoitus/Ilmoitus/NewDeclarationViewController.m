@@ -21,10 +21,11 @@
 @property (nonatomic) NSMutableArray *supervisorList;
 @property (weak, nonatomic) IBOutlet UITextView *comment;
 @property (weak, nonatomic) IBOutlet UIButton *add;
-
 @property (weak, nonatomic) IBOutlet UIButton *cancel;
-@property (nonatomic) UIPickerView * pktStatePicker;
-@property (nonatomic) UIToolbar *mypickerToolbar;
+@property (nonatomic) UIPickerView *supervisorPicker;
+@property (nonatomic) UIToolbar *supervisorPickerToolbar;
+@property (nonatomic) UIActionSheet *pickerViewPopup;
+
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
 @property (weak, nonatomic) IBOutlet UILabel *bijlageLabel;
@@ -69,8 +70,6 @@
     [self.comment setReturnKeyType: UIReturnKeyDone];
     self.comment.delegate = self;
     
-    [self getSupervisorList];
-    
     if (_declaration == nil) {
         [self.navigationItem setTitle:@"Declaratie aanmaken"];
     }
@@ -99,6 +98,10 @@
         }
     }
     
+    if (self.state == NEW || self.state == VIEW) {
+        [self getSupervisorList];
+    }
+    
     self.comment.text = self.declaration.comment;
     
     
@@ -122,113 +125,86 @@
 
 -(void)createSupervisorPicker
 {
-    // Create SupervisorPicker
-    self.supervisorList = [[NSMutableArray alloc] init];
+    // Create type picker
+    self.supervisorPicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 0, 0)];
+    self.supervisorPicker.hidden = NO;
+    self.supervisorPicker.delegate = self;
     
-    self.pktStatePicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 43, 320, 480)];
+    self.supervisorPicker.dataSource = self;
     
-    self.pktStatePicker.delegate = self;
+    self.supervisorPickerToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
+    self.supervisorPickerToolbar.tintColor = [UIColor whiteColor];
+    self.supervisorPickerToolbar.barTintColor = [UIColor colorWithRed:(189/255.0) green:(26/255.0) blue:(47/255.0) alpha:1.0];
+    [self.supervisorPickerToolbar sizeToFit];
     
-    self.pktStatePicker.dataSource = self;
-    
-    [self.pktStatePicker  setShowsSelectionIndicator:YES];
-    
-    self.supervisor.inputView =  self.pktStatePicker  ;
-    
-    // Create done button in UIPickerView
-    self.mypickerToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 56)];
-    
-    self.mypickerToolbar.tintColor = [UIColor whiteColor];
-    self.mypickerToolbar.barTintColor = [UIColor colorWithRed:(189/255.0) green:(26/255.0) blue:(47/255.0) alpha:1.0];
-    
-    [self.mypickerToolbar sizeToFit];
-    
-    
-    NSMutableArray *barItems = [[NSMutableArray alloc] init];
-    
+    NSMutableArray *supervisorBarItems = [[NSMutableArray alloc] init];
     
     UIBarButtonItem *flexSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:self action:nil];
     
-    [barItems addObject:flexSpace];
+    [supervisorBarItems addObject:flexSpace];
     
+    UIBarButtonItem *supervisorDoneBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneSupervisorButtonPressed)];
+    [supervisorBarItems addObject:supervisorDoneBtn];
     
-    UIBarButtonItem *doneBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(pickerDoneClicked)];
+    UIBarButtonItem *cancelSupervisorBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelSupervisorButtonPressed)];
+    [supervisorBarItems addObject:cancelSupervisorBtn];
     
-    [barItems addObject:doneBtn];
-    
-    
-    [self.mypickerToolbar setItems:barItems animated:YES];
-    
-    
-    self.supervisor.inputAccessoryView = self.mypickerToolbar;
+    [self.supervisorPickerToolbar setItems:supervisorBarItems animated:YES];
     
     //set labels
     self.comment.text = self.declaration.comment;
     self.supervisor.text = self.declaration.comment;
-    
-    
 }
 
--(void)getAttachmentToken:(Attachment *)att
+-(void)doneSupervisorButtonPressed
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
-    NSString *url = [NSString stringWithFormat:@"%@/attachment_token/%lld", baseURL, att.ident];
-    NSLog(@"%@", url);
-    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSError* error;
-        NSDictionary* json = [NSJSONSerialization
-                              JSONObjectWithData:responseObject
-                              
-                              options:kNilOptions
-                              error:&error];
-        
-        NSLog(@"JSON response: %@", json);
-        
-        NSString *token = json[@"attachment_token"];
-        [self downloadAttachment:token :att];
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error while getting attachment token: %@", error);
-    }];
-    
+    int selected = [self.supervisorPicker selectedRowInComponent:0];
+    Supervisor *sup = [self.supervisorList objectAtIndex:selected];
+    [self setSupervisorField:sup];
+    [self setSupervisorForDeclaration:sup];
+    [self setSupervisorPickerSelected:sup];
+    [self.pickerViewPopup dismissWithClickedButtonIndex:1 animated:YES];
 }
 
--(void)downloadAttachment:(NSString *)token :(Attachment *)att
+-(void)cancelSupervisorButtonPressed
 {
-    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:att.name];
-    
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    NSString *url = [NSString stringWithFormat:@"%@/attachment/%lld/%@", baseURL, att.ident, token];
-    AFHTTPRequestOperation *op = [manager GET:url
-                                   parameters:nil
-                                      success:^(AFHTTPRequestOperation *operation, id responseObject) {
-                                          NSLog(@"successful download to %@", path);
-                                      } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                          NSLog(@"Error: %@", error);
-                                      }];
-    [op setResponseSerializer:[AFHTTPResponseSerializer serializer]];
-    op.outputStream = [NSOutputStream outputStreamToFileAtPath:path append:NO];
+    [self.pickerViewPopup dismissWithClickedButtonIndex:1 animated:YES];
 }
 
--(void)textFieldDidChange
+-(void)setSupervisorField:(Supervisor *)sup
 {
-    NSLog( @"Supervisor TextField changed: %@", self.supervisor.text);
-    
-    for (int i = 0; i < [self.supervisorList count]; i++){
-        Supervisor *supervisor = [self.supervisorList objectAtIndex:i];
-        if ([[NSString stringWithFormat:@"%@ %@ (%d)", supervisor.first_name, supervisor.last_name, supervisor.employee_number] isEqualToString:self.supervisor.text]) {
-            [self.declaration.assignedTo addObject:[NSNumber numberWithLongLong:supervisor.ident]];
-            [self.pktStatePicker selectRow:i inComponent:0 animated:YES];
+    NSString *name = [NSString stringWithFormat:@"%@ %@ (%i)", sup.first_name, sup.last_name, sup.employee_number];
+    self.supervisor.text = @"";
+    self.supervisor.text = name;
+}
+
+-(void)setSupervisorForDeclaration:(Supervisor *)sup
+{
+    NSNumber *ident = [NSNumber numberWithLongLong:sup.ident];
+    [self.declaration.assignedTo removeAllObjects];
+    [self.declaration.assignedTo addObject:ident];
+}
+
+-(void)setSupervisorPickerSelected:(Supervisor *)sup
+{
+    for (int i = 0; i < [self.supervisorList count]; i++) {
+        Supervisor *superv = [self.supervisorList objectAtIndex:i];
+        if (superv.ident == sup.ident) {
+            [self.supervisorPicker selectRow:i inComponent:0 animated:YES];
         }
     }
 }
 
--(void)pickerDoneClicked
+-(void)textFieldDidBeginEditing:(UITextField*)textField
 {
-    [self.supervisor resignFirstResponder];
+    if (textField == self.supervisor) {
+        [self.supervisor resignFirstResponder];
+        self.pickerViewPopup = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+        [self.pickerViewPopup addSubview:self.supervisorPickerToolbar];
+        [self.pickerViewPopup addSubview:self.supervisorPicker];
+        [self.pickerViewPopup showInView:self.view];
+        [self.pickerViewPopup setBounds:CGRectMake(0,0,320, 464)];
+    }
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -245,13 +221,6 @@
 {
     Supervisor *sup = [self.supervisorList objectAtIndex:row];
     return [NSString stringWithFormat:@"%@ %@ (%d)", sup.first_name, sup.last_name, sup.employee_number];
-}
-
-- (void) pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
-{
-    Supervisor *sup = [self.supervisorList objectAtIndex:row];
-    self.supervisor.text = @"";
-    [self.supervisor insertText:[NSString stringWithFormat:@"%@ %@ (%d)", sup.first_name, sup.last_name, sup.employee_number]];
 }
 
 -(BOOL)textViewShouldEndEditing:(UITextView *)textView {
@@ -481,16 +450,34 @@
             [supervisorsFound addObject:sup];
             
             // Set default supervisor
-            if ((sup.ident == [[[NSUserDefaults standardUserDefaults] stringForKey:@"supervisor"] longLongValue]) && ([self.declaration.assignedTo firstObject] == nil)) {
+            /*if ((sup.ident == [[[NSUserDefaults standardUserDefaults] stringForKey:@"supervisor"] longLongValue]) && ([self.declaration.assignedTo firstObject] == nil)) {
                 self.supervisor.text = @"";
                 NSString *spv = [NSString stringWithFormat:@"%@ %@ (%d)", sup.first_name, sup.last_name, sup.employee_number];
                 self.supervisor.text = spv;
                 [self.declaration.assignedTo addObject:[NSNumber numberWithLongLong:sup.ident]];
-            }
+            }*/
         }
         self.supervisorList = supervisorsFound;
         
-        [self.pktStatePicker reloadAllComponents];
+        if (self.state == NEW) {
+            for (Supervisor *sup in supervisorsFound) {
+                if (sup.ident == [[[NSUserDefaults standardUserDefaults] objectForKey:@"supervisor"] longLongValue]) {
+                    [self setSupervisorField:sup];
+                    [self setSupervisorForDeclaration:sup];
+                    [self setSupervisorPickerSelected:sup];
+                }
+            }
+        } else {
+            for (Supervisor *sup in supervisorsFound) {
+                if (sup.ident == [[self.declaration.assignedTo firstObject] longLongValue]) {
+                    [self setSupervisorField:sup];
+                    [self setSupervisorForDeclaration:sup];
+                    [self setSupervisorPickerSelected:sup];
+                }
+            }
+        }
+        
+        [self.supervisorPicker reloadAllComponents];
         
         // TODO create dropdown to select supervisor
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

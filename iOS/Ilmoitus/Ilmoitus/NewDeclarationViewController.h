@@ -13,4 +13,5 @@
 @interface NewDeclarationViewController : UIViewController <UITextFieldDelegate, UITextViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 @property Declaration *declaration;
 @property (nonatomic) StateType state;
+-(void)getSupervisorList;
 @end
