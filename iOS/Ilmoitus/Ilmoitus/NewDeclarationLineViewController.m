@@ -119,11 +119,11 @@
 {
     for (UIButton *button in self.buttonCollection)
     {
-        button.hidden = true;
+        button.hidden = YES;
     }
     for(UITextField *input in self.inputCollection)
     {
-        input.enabled = false;
+        input.enabled = NO;
     }
 }
 

@@ -18,4 +18,5 @@
 @property (nonatomic, strong) DeclarationType *type;
 @property (nonatomic, strong) NSString *description;
 
+
 @end

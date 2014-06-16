@@ -80,6 +80,8 @@
         {
             button.hidden = YES;
         }
+        self.supervisor.enabled = NO;
+        self.comment.editable = NO;
         
     }
     
