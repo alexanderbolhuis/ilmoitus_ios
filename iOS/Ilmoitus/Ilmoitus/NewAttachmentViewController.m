@@ -30,6 +30,12 @@
     self.image.image = self.attachment.image;
 }
 
+-(void)reloadFile
+{
+    NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:self.attachment.name];
+    self.image.image = [UIImage imageWithContentsOfFile:path];
+}
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];

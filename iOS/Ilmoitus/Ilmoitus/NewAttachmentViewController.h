@@ -19,5 +19,6 @@
 @property Attachment *attachment;
 @property UIDocumentInteractionController *documentInteractionController;
 -(void)setModus:(StateType)state;
+-(void)reloadFile;
 
 @end

@@ -32,9 +32,6 @@
     
 	// Do any additional setup after loading the view, typically from a nib.
     self.navItem.title = [NSString stringWithFormat:@"Ingelogd als %@ %@ (%@)", [[NSUserDefaults standardUserDefaults] stringForKey:@"person_first_name"], [[NSUserDefaults standardUserDefaults] stringForKey:@"person_last_name"], [[NSUserDefaults standardUserDefaults] stringForKey:@"person_employee_number"]];
-    
-    // GET Actions when shwoing view
-    [self declarationsFromServer];
 }
 
 - (void)viewDidAppear:(BOOL)animated

@@ -43,7 +43,9 @@
     self.tabBarController.tabBar.hidden = YES;
     
     // Logout
-    [self logout];
+    if (self.tabBarController != nil) {
+        [self logout];
+    }
     
 }
 

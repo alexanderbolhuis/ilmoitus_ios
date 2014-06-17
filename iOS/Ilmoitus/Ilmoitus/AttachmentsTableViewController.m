@@ -190,7 +190,7 @@
     return NO;
 }
 
--(void)getAttachmentToken:(Attachment *)att
+-(void)getAttachmentToken:(Attachment *)att Destination:(NewAttachmentViewController *)destination
 {
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
@@ -213,7 +213,7 @@
         NSLog(@"JSON response: %@", json);
         
         NSString *token = json[@"attachment_token"];
-        [self downloadAttachment:token :att];
+        [self downloadAttachment:token :att Destination:destination];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting attachment token: %@", error);
@@ -221,7 +221,7 @@
     }];
 }
 
--(void)downloadAttachment:(NSString *)token :(Attachment *)att
+-(void)downloadAttachment:(NSString *)token :(Attachment *)att Destination:(NewAttachmentViewController *)destination
 {
     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:att.name];
     
@@ -238,6 +238,7 @@
                                    parameters:nil
                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                           NSLog(@"successful download to %@", path);
+                                          [destination reloadFile];
                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                           [HttpResponseHandler handelErrorCode:operation :error:self];
                                           NSLog(@"Error: %@", error);
@@ -254,7 +255,7 @@
         
         NSIndexPath *path = [self.table indexPathForSelectedRow];
         Attachment *attachment = [self.declaration.attachments objectAtIndex:path.row];
-        [self getAttachmentToken:attachment];
+        [self getAttachmentToken:attachment Destination:destination];
         destination.attachment = attachment;
         
         if(self.state == NEW)
