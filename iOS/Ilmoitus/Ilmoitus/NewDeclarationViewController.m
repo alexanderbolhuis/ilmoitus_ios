@@ -349,7 +349,7 @@
                               options:kNilOptions
                               error:&error];
         
-        [self showSuccessMessage:@"Verwijderen geslaagd" :@"Declaratie is verwijdert"];
+        [self showSuccessMessage:@"Verwijderen geslaagd" :@"Declaratie is verwijderd"];
         [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response: %@", json);

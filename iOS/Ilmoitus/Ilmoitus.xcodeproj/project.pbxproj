@@ -44,7 +44,6 @@
 		46D94EC719063A08008E6C01 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 46D94EC519063A08008E6C01 /* InfoPlist.strings */; };
 		46D94EC919063A08008E6C01 /* IlmoitusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94EC819063A08008E6C01 /* IlmoitusTests.m */; };
 		46D94ED719063EA2008E6C01 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED619063EA2008E6C01 /* LoginViewController.m */; };
-		46D94EDA19063F82008E6C01 /* DeclarationDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46D94ED919063F82008E6C01 /* DeclarationDetailViewController.m */; };
 		84BE5846192F54A800ECE63A /* DeclarationTypeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE5845192F54A800ECE63A /* DeclarationTypeController.m */; };
 		84BE584C192F7EF700ECE63A /* DeclarationType.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE584B192F7EF700ECE63A /* DeclarationType.m */; };
 		84BE584F192F7F0D00ECE63A /* DeclarationSubType.m in Sources */ = {isa = PBXBuildFile; fileRef = 84BE584E192F7F0D00ECE63A /* DeclarationSubType.m */; };
@@ -133,8 +132,6 @@
 		46D94EC819063A08008E6C01 /* IlmoitusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = IlmoitusTests.m; sourceTree = "<group>"; };
 		46D94ED519063EA2008E6C01 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		46D94ED619063EA2008E6C01 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
-		46D94ED819063F82008E6C01 /* DeclarationDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationDetailViewController.h; sourceTree = "<group>"; };
-		46D94ED919063F82008E6C01 /* DeclarationDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeclarationDetailViewController.m; sourceTree = "<group>"; };
 		84BE5844192F54A800ECE63A /* DeclarationTypeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationTypeController.h; sourceTree = "<group>"; };
 		84BE5845192F54A800ECE63A /* DeclarationTypeController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeclarationTypeController.m; sourceTree = "<group>"; };
 		84BE584A192F7EF700ECE63A /* DeclarationType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationType.h; sourceTree = "<group>"; };
@@ -281,8 +278,6 @@
 				463019C81917D1D0004D2613 /* AFNetworking */,
 				463019DC1917D1D0004D2613 /* UIKit+AFNetworking */,
 				46850DB21906A7E800498B6F /* Models */,
-				46D94ED819063F82008E6C01 /* DeclarationDetailViewController.h */,
-				46D94ED919063F82008E6C01 /* DeclarationDetailViewController.m */,
 				46D94ED519063EA2008E6C01 /* LoginViewController.h */,
 				46D94ED619063EA2008E6C01 /* LoginViewController.m */,
 				46D94EAC19063A08008E6C01 /* Main.storyboard */,
@@ -469,7 +464,6 @@
 				46D94EA719063A08008E6C01 /* main.m in Sources */,
 				463019FD1917D1D1004D2613 /* UIRefreshControl+AFNetworking.m in Sources */,
 				46AE9B6F190902C700AE3F70 /* Declaration.m in Sources */,
-				46D94EDA19063F82008E6C01 /* DeclarationDetailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
