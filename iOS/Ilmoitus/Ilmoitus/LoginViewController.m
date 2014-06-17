@@ -8,6 +8,7 @@
 
 #import "LoginViewController.h"
 #import "constants.h"
+#import "HttpResponseHandler.h"
 
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *usernamefield;
@@ -48,10 +49,13 @@
 
 -(void)logout
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
     NSString *url = [NSString stringWithFormat:@"%@/auth/logout", baseURL];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError* error;
@@ -68,7 +72,9 @@
         NSLog(@"%@", json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+        [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -77,8 +83,11 @@
 }
 
 - (IBAction)loginAction:(id)sender {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    //manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
     NSDictionary *params = @{@"email":self.usernamefield.text, @"password":self.passwordfield.text};
     NSString *url = [NSString stringWithFormat:@"%@/auth/login", baseURL];
     AFHTTPRequestOperation *apiRequest = [manager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -86,9 +95,9 @@
         NSDictionary* json = [NSJSONSerialization
                               JSONObjectWithData:responseObject
                               
-                              options:kNilOptions 
+                              options:kNilOptions
                               error:&error];
-
+        
         NSLog(@"JSON: %@",json);
         NSNumber *success = json[@"is_logged_in"];
         // Check if is_logged_in is true
@@ -99,10 +108,14 @@
             [[NSUserDefaults standardUserDefaults] synchronize];
             
             // GET Usersettings
-            AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+            AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
             manager.responseSerializer = [AFHTTPResponseSerializer serializer];
             manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+            
             [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+            
+            [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+            
             NSString *url = [NSString stringWithFormat:@"%@/current_user/details", baseURL];
             [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 NSError* error;
@@ -126,25 +139,16 @@
                 NSLog(@"%@", json);
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 NSLog(@"Error: %@", responseObject);
+                [HttpResponseHandler handelErrorCode:operation :error:self];
             }];
         } else {
             NSLog(@"JSON: %@",@"Failed");
-                self.loginFailedAlert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                               message:@"Login Failed"
-                                                              delegate:nil
-                                                     cancelButtonTitle:@"Cancel"
-                                                     otherButtonTitles:nil];
-                [self.loginFailedAlert show];
+            [HttpResponseHandler showErrorMessageTitle:@"Error" Message:@"Login mislukt"];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
-        self.loginFailedAlert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                       message:@"Login Failed"
-                                                      delegate:nil
-                                             cancelButtonTitle:@"Cancel"
-                                             otherButtonTitles:nil];
-        [self.loginFailedAlert show];
+        [HttpResponseHandler showErrorMessageTitle:@"Error" Message:@"Login mislukt"];
     }];
     
     [apiRequest start];

@@ -10,6 +10,7 @@
 #import "NewAttachmentViewController.h"
 #import "Attachment.h"
 #import "constants.h"
+#import "HttpResponseHandler.h"
 
 @interface AttachmentsTableViewController ()
 @property (strong, nonatomic) IBOutlet UITableView *table;
@@ -160,10 +161,14 @@
 
 -(void)getAttachmentToken:(Attachment *)att
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
+    
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
     NSString *url = [NSString stringWithFormat:@"%@/attachment_token/%lld", baseURL, att.ident];
     NSLog(@"%@", url);
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -181,21 +186,29 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting attachment token: %@", error);
+        [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
-    
 }
 
 -(void)downloadAttachment:(NSString *)token :(Attachment *)att
 {
     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:att.name];
     
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
+    [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
     NSString *url = [NSString stringWithFormat:@"%@/attachment/%lld/%@", baseURL, att.ident, token];
     AFHTTPRequestOperation *op = [manager GET:url
                                    parameters:nil
                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                           NSLog(@"successful download to %@", path);
                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                          [HttpResponseHandler handelErrorCode:operation :error:self];
                                           NSLog(@"Error: %@", error);
                                       }];
     [op setResponseSerializer:[AFHTTPResponseSerializer serializer]];

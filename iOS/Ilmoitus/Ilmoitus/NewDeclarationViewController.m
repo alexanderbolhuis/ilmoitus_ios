@@ -15,6 +15,7 @@
 #import "constants.h"
 #import "Attachment.h"
 #import "StateType.h"
+#import "HttpResponseHandler.h"
 
 @interface NewDeclarationViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
@@ -274,9 +275,11 @@
         self.declaration.status = @"Open";
         
         Declaration *decl = self.declaration;
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+        
         manager.responseSerializer = [AFHTTPResponseSerializer serializer];
         manager.requestSerializer = [AFJSONRequestSerializer serializer];
+        
         [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
         
         // Lines
@@ -320,13 +323,12 @@
                                   
                                   options:kNilOptions
                                   error:&error];
-            [self showSuccessMessage:@"Indienen geslaagd" :@"Declaratie is ingediend"];
+            [HttpResponseHandler showSuccessMessageTitle:@"Indienen geslaagd" Message:@"Declaratie is ingediend"];
             [self clearView];
             NSLog(@"JSON response data for saving declaration: %@",json);
-            // Handle success
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
-            // Handle error
+            [HttpResponseHandler handelErrorCode:operation :error:self];
             
         }];
         
@@ -337,11 +339,15 @@
 -(void)deleteDeclaration
 {
     // Do Request
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
+    NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, self.declaration.ident];
+    
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
-    NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, self.declaration.ident];
+    
     [manager DELETE:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError* error;
         NSDictionary* json = [NSJSONSerialization
@@ -350,21 +356,24 @@
                               options:kNilOptions
                               error:&error];
         
-        [self showSuccessMessage:@"Verwijderen geslaagd" :@"Declaratie is verwijderd"];
+        [HttpResponseHandler showSuccessMessageTitle:@"Verwijderen geslaagd" Message:@"Declaratie is verwijderd"];
         [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response: %@", json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting supervisor list: %@", error);
+        [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
 }
 
 -(void)editDeclaration
 {
     Declaration *decl = self.declaration;
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
     
     // Lines
@@ -409,14 +418,13 @@
                               
                               options:kNilOptions
                               error:&error];
-        [self showSuccessMessage:@"Aanpassen geslaagd" :@"Declaratie is aangepast"];
+        [HttpResponseHandler showSuccessMessageTitle:@"Aanpassen geslaagd" Message:@"Declaratie is aangepast"];
         [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response data for saving declaration: %@",json);
-        // Handle success
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
-        // Handle error
+        [HttpResponseHandler handelErrorCode:operation :error:self];
         
     }];
     
@@ -426,10 +434,13 @@
 -(void)getSupervisorList
 {
     // Do Request
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
     NSString *url = [NSString stringWithFormat:@"%@/current_user/supervisors", baseURL];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError* error;
@@ -454,14 +465,6 @@
             sup.max_declaration_price = [supervisor[@"max_declaration_price"] floatValue];
             
             [supervisorsFound addObject:sup];
-            
-            // Set default supervisor
-            /*if ((sup.ident == [[[NSUserDefaults standardUserDefaults] stringForKey:@"supervisor"] longLongValue]) && ([self.declaration.assignedTo firstObject] == nil)) {
-                self.supervisor.text = @"";
-                NSString *spv = [NSString stringWithFormat:@"%@ %@ (%d)", sup.first_name, sup.last_name, sup.employee_number];
-                self.supervisor.text = spv;
-                [self.declaration.assignedTo addObject:[NSNumber numberWithLongLong:sup.ident]];
-            }*/
         }
         self.supervisorList = supervisorsFound;
         
@@ -488,6 +491,7 @@
         [self.supervisorPicker reloadAllComponents];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting supervisor list: %@", error);
+        [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
 }
 
@@ -504,16 +508,6 @@
     
 }
 
--(void)showSuccessMessage: (NSString*)successTitle :(NSString*)successMessage
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:successTitle
-                                                    message:successMessage
-                                                   delegate:nil
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
-}
-
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     if([[segue identifier] isEqualToString:@"listLines"])
@@ -521,13 +515,13 @@
         DeclarationLinesTableViewController *destination = [segue destinationViewController];
         
         destination.declaration = self.declaration;
-
+        
         destination.state = self.state;
     }
     if([[segue identifier] isEqualToString:@"listAttachment"])
     {
         AttachmentsTableViewController *destination = [segue destinationViewController];
-
+        
         destination.declaration = self.declaration;
         
         destination.state = self.state;

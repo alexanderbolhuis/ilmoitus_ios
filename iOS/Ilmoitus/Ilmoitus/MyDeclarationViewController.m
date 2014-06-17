@@ -12,6 +12,7 @@
 #import "DeclarationLine.h"
 #import "Attachment.h"
 #import "constants.h"
+#import "HttpResponseHandler.h"
 
 @interface MyDeclarationViewController ()
 @property (nonatomic, strong) NSMutableArray *declarationList;
@@ -53,10 +54,13 @@
 - (void)declarationsFromServer
 {
     // Do Request
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
     NSString *url = [NSString stringWithFormat:@"%@/current_user/declarations", baseURL];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError* error;
@@ -92,6 +96,7 @@
         
         NSLog(@"GET request success response for all declarations: %@", json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [HttpResponseHandler handelErrorCode:operation :error:self];
         NSLog(@"GET request Error for all declarations: %@", error);
     }];
     
@@ -154,10 +159,13 @@
 
 -(void)setFullDeclaration:(int64_t)ident destination:(NewDeclarationViewController *)destination
 {
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+    
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    
     [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+    
     NSString *url = [NSString stringWithFormat:@"%@/declaration/%lld", baseURL, ident];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSError* error;
@@ -166,7 +174,7 @@
                               
                               options:kNilOptions
                               error:&error];
-
+        
         Declaration *dec = [[Declaration alloc]init];
         dec.ident = [json[@"id"] longLongValue];
         dec.comment = json[@"comment"];
@@ -224,6 +232,7 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"GET request Error for all declarations: %@", error);
+        [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
 }
 
@@ -238,9 +247,9 @@
         Declaration *dec = self.declarationList[index.row];
         
         [self setFullDeclaration:dec.ident destination:destination];
-
+        
         destination.declaration = [[Declaration alloc] init];
-
+        
         if([dec.status  isEqual: @"Open"])
         {
             destination.state = EDIT;
