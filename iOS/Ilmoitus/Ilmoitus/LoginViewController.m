@@ -149,11 +149,13 @@
             }];
         } else {
             NSLog(@"JSON: %@",@"Failed");
+            [DejalBezelActivityView removeViewAnimated:YES];
             [HttpResponseHandler showErrorMessageTitle:@"Error" Message:@"Login mislukt"];
         }
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error: %@", error);
+        [DejalBezelActivityView removeViewAnimated:YES];
         [HttpResponseHandler showErrorMessageTitle:@"Error" Message:@"Login mislukt"];
     }];
     
