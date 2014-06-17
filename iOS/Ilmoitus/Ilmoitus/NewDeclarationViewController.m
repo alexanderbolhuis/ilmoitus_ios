@@ -16,6 +16,7 @@
 #import "Attachment.h"
 #import "StateType.h"
 #import "HttpResponseHandler.h"
+#import "AppDelegate.h"
 
 @interface NewDeclarationViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
@@ -26,6 +27,9 @@
 @property (nonatomic) UIPickerView *supervisorPicker;
 @property (nonatomic) UIToolbar *supervisorPickerToolbar;
 @property (nonatomic) UIActionSheet *pickerViewPopup;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+
+@property (weak, nonatomic) UITextView *activeField;
 
 @property (weak, nonatomic) IBOutlet UILabel *totalPrice;
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *buttons;
@@ -70,6 +74,8 @@
     self.supervisor.delegate = self;
     [self.comment setReturnKeyType: UIReturnKeyDone];
     self.comment.delegate = self;
+    
+    [self registerForKeyboardNotifications];
     
     if (_declaration == nil) {
         [self.navigationItem setTitle:@"Declaratie aanmaken"];
@@ -207,6 +213,16 @@
         [self.pickerViewPopup showInView:self.view];
         [self.pickerViewPopup setBounds:CGRectMake(0,0,320, 464)];
     }
+}
+
+-(void)textViewDidBeginEditing:(UITextView*)textView
+{
+    self.activeField = textView;
+}
+
+-(void)textViewDidEndEditing:(UITextView *)textView
+{
+    self.activeField = nil;
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -527,5 +543,50 @@
         destination.state = self.state;
     }
     
+}
+
+// Call this method somewhere in your view controller setup code.
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWillShow:(NSNotification*)aNotification
+{
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.3]; // if you want to slide up the view
+    
+    CGRect rect = self.view.frame;
+    // 1. move the view's origin up so that the text field that will be hidden come above the keyboard
+    // 2. increase the size of the view so that the area behind the keyboard is covered up.
+    rect.origin.y -= 80.0;
+    rect.size.height += 80.0;
+    self.view.frame = rect;
+    
+    [UIView commitAnimations];
+}
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationDuration:0.3]; // if you want to slide up the view
+    
+    CGRect rect = self.view.frame;
+        // 1. move the view's origin up so that the text field that will be hidden come above the keyboard
+        // 2. increase the size of the view so that the area behind the keyboard is covered up.
+    rect.origin.y += 80.0;
+    rect.size.height -= 80.0;
+    self.view.frame = rect;
+    
+    [UIView commitAnimations];
 }
 @end
