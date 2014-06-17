@@ -193,7 +193,6 @@
 
 -(void)getAttachmentToken:(Attachment *)att Destination:(NewAttachmentViewController *)destination
 {
-    [DejalBezelActivityView activityViewForView:self.view];
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
     
@@ -215,12 +214,10 @@
         NSLog(@"JSON response: %@", json);
         
         NSString *token = json[@"attachment_token"];
-        [DejalBezelActivityView removeViewAnimated:YES];
         [self downloadAttachment:token :att Destination:destination];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting attachment token: %@", error);
-        [DejalBezelActivityView removeViewAnimated:YES];
         [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
 }
@@ -228,7 +225,6 @@
 -(void)downloadAttachment:(NSString *)token :(Attachment *)att Destination:(NewAttachmentViewController *)destination
 {
     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:att.name];
-    [DejalBezelActivityView activityViewForView:self.view];
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
     
@@ -242,10 +238,8 @@
                                    parameters:nil
                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                           NSLog(@"successful download to %@", path);
-                                          [DejalBezelActivityView removeViewAnimated:YES];
                                           [destination reloadFile];
                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                                          [DejalBezelActivityView removeViewAnimated:YES];
                                           [HttpResponseHandler handelErrorCode:operation :error:self];
                                           NSLog(@"Error: %@", error);
                                       }];
