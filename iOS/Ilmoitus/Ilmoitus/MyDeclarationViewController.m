@@ -232,8 +232,8 @@
         }
         dec.attachments = attachments;
         
-        destination.declaration = dec;
         [DejalBezelActivityView removeViewAnimated:YES];
+        destination.declaration = dec;
         [destination getSupervisorList];
         NSLog(@"GET request SUCCES for specific declaration: %@", json);
         
@@ -254,11 +254,9 @@
         NSIndexPath *index = [self.tableView indexPathForSelectedRow];
         Declaration *dec = self.declarationList[index.row];
         
-        [self setFullDeclaration:dec.ident destination:destination];
-        
         destination.declaration = [[Declaration alloc] init];
         
-        if([dec.status  isEqual: @"Open"])
+        if([dec.status isEqual: @"Open"])
         {
             destination.state = EDIT;
         }
@@ -266,6 +264,8 @@
         {
             destination.state = VIEW;
         }
+        
+        [self setFullDeclaration:dec.ident destination:destination];
     }
 }
 @end
