@@ -10,7 +10,7 @@
 #import "Attachment.h"
 #import "StateType.h"
 
-@interface NewAttachmentViewController : UIViewController< UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIPickerViewDataSource, UIDocumentInteractionControllerDelegate>
+@interface NewAttachmentViewController : UIViewController< UINavigationControllerDelegate, UIImagePickerControllerDelegate, UIDocumentInteractionControllerDelegate>
 {
     UIImagePickerController *imagePicker;
 }

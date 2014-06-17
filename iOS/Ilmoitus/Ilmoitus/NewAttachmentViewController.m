@@ -64,7 +64,7 @@
     if(![self.attachment.name isEqualToString:@""] && self.attachment != nil && self.state != NEW ){
         [self openAttachmentFile:self.attachment.name];
     } else {
-        [[[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Close" destructiveButtonTitle:nil otherButtonTitles:@"Choose existing", @"Create new",  nil]showInView:self.view];
+        [[[UIActionSheet alloc] initWithTitle:@"Maak een keuze:" delegate:self cancelButtonTitle:@"Annuleren" destructiveButtonTitle:nil otherButtonTitles:@"Kies bestaande foto", @"Maak nieuwe fote",  nil]showInView:self.view];
     }
 }
 
@@ -92,7 +92,8 @@
     }
     else
     {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Photo Library is not available" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil];
+        #warning show error HTTPResponehandler
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Foto bibliotheek is niet beschikbaar" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
 }
@@ -106,7 +107,8 @@
     }
     else
     {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Camera is not available" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil];
+        #warning show error HTTPResponehandler
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error" message:@"Camera is niet beschikbaar" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     }
 }
@@ -159,7 +161,6 @@
     [self setupImagePicker];
     self.add.titleLabel.text = @"Toevoegen";
     self.cancel.titleLabel.text = @"Annuleren";
-    self.title = @"attachment toevoegen";
 }
 
 -(void)setModusEdit
@@ -183,12 +184,13 @@
     [self.cancel.titleLabel setTextAlignment: NSTextAlignmentCenter];
     [self.add.titleLabel setTextAlignment: NSTextAlignmentCenter];
     
-    self.title = @"Bijlage aanpassen";
+    [self.navigationItem setTitle:@"Bijlage aanpassen"];
 }
 
 -(void)setModusView
 {
-    self.title =@"Bijlage bekijken";
+    [self.navigationItem setTitle:@"Bijlage bekijken"];
+
     [self.select setTitle:@"Bijlage openen" forState:UIControlStateNormal];
     [self.select setTitle:@"Bijlage openen" forState:UIControlStateHighlighted];
     [self.select setTitle:@"Bijlage openen" forState:UIControlStateDisabled];
