@@ -131,6 +131,7 @@
     
     createdAtlabel = (UILabel *)[cell viewWithTag:1];
     [createdAtlabel adjustsFontSizeToFitWidth];
+    
     createdAtlabel.text = [NSString stringWithFormat:@"Declaratie op %@", declaration.createdAt];
     
     UILabel *statusLabel;

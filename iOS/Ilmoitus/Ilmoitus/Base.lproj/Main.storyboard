@@ -71,7 +71,7 @@
                             <outlet property="delegate" destination="8oB-aY-hRy" id="sy1-Hb-FFb"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" tag="1" title="Mijn declaraties" id="fa5-9P-TTG"/>
+                    <tabBarItem key="tabBarItem" tag="1" title="Mijn declaraties" image="icon_declaratie_overzicht" id="fa5-9P-TTG"/>
                     <navigationItem key="navigationItem" id="R8V-DC-3Ms"/>
                     <connections>
                         <outlet property="navItem" destination="R8V-DC-3Ms" id="bJI-Nx-kud"/>
@@ -238,7 +238,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" tag="2" title="Indienen" id="Z7h-1E-pvt"/>
+                    <tabBarItem key="tabBarItem" tag="2" title="Indienen" image="icon_declaratie_toevoegen" id="Z7h-1E-pvt"/>
                     <navigationItem key="navigationItem" id="BcC-aF-5bO"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="568"/>
@@ -607,7 +607,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Log uit" id="mpn-na-9zk"/>
+                    <tabBarItem key="tabBarItem" title="Log uit" image="icon_uitloggen" id="mpn-na-9zk"/>
                     <connections>
                         <outlet property="passwordfield" destination="fkC-G8-dVK" id="NpK-qB-u18"/>
                         <outlet property="usernamefield" destination="67v-fJ-lNf" id="kMY-Q4-oWV"/>
@@ -641,6 +641,9 @@
         </scene>
     </scenes>
     <resources>
+        <image name="icon_declaratie_overzicht" width="34" height="30"/>
+        <image name="icon_declaratie_toevoegen" width="33" height="30"/>
+        <image name="icon_uitloggen" width="30" height="30"/>
         <image name="snsreaal" width="250" height="136"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
