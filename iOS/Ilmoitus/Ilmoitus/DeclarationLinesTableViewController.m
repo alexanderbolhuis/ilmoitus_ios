@@ -149,8 +149,8 @@
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
         [self.declaration.lines removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
-    [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
 }
 
 // Override to support conditional rearranging of the table view.

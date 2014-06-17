@@ -191,6 +191,7 @@
         Supervisor *superv = [self.supervisorList objectAtIndex:i];
         if (superv.ident == sup.ident) {
             [self.supervisorPicker selectRow:i inComponent:0 animated:YES];
+            break;
         }
     }
 }
@@ -470,6 +471,7 @@
                     [self setSupervisorField:sup];
                     [self setSupervisorForDeclaration:sup];
                     [self setSupervisorPickerSelected:sup];
+                    break;
                 }
             }
         } else {
@@ -478,6 +480,7 @@
                     [self setSupervisorField:sup];
                     [self setSupervisorForDeclaration:sup];
                     [self setSupervisorPickerSelected:sup];
+                    break;
                 }
             }
         }
