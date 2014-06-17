@@ -14,6 +14,7 @@
 #import "DeclarationSubType.h"
 #import "Attachment.h"
 #import "NewDeclarationViewController.h"
+#import "HttpResponseHandler.h"
 
 @interface NewDeclarationLineViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *add;
@@ -422,10 +423,14 @@
     if(self.state!=VIEW)
     {
         NSMutableArray *declarationsTypesFound = [[NSMutableArray alloc] init];
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+        
+        
         manager.responseSerializer = [AFHTTPResponseSerializer serializer];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        
         [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+        
         NSString *url = [NSString stringWithFormat:@"%@/declarationtypes", baseURL];
         [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
          {
@@ -450,6 +455,7 @@
              failure:^(AFHTTPRequestOperation *operation, NSError *error)
          {
              NSLog(@"GET request Error for all declarations main types: %@", error);
+             [HttpResponseHandler handelErrorCode:operation :error:self];
          }];
     }
 }
@@ -459,12 +465,17 @@
     if(self.state != VIEW)
     {
         NSString *combinedURL = [NSString stringWithFormat:@"%@%@%lld", baseURL, @"/declarationtype/", mainTpyeId];
+        
         NSMutableArray *declarationsSubTypesFound = [[NSMutableArray alloc] init];
         
-        AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+        AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
+        
+        
         manager.responseSerializer = [AFHTTPResponseSerializer serializer];
         manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+        
         [manager.requestSerializer setValue:[[NSUserDefaults standardUserDefaults] stringForKey:@"token"] forHTTPHeaderField:@"Authorization"];
+        
         [manager GET:combinedURL parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
          {
              NSError* error;
@@ -492,6 +503,7 @@
              failure:^(AFHTTPRequestOperation *operation, NSError *error)
          {
              NSLog(@"GET request Error for all declarations: %@", error);
+             [HttpResponseHandler handelErrorCode:operation :error:self];
          }];
     }
 }
@@ -507,25 +519,15 @@
             
             if (maxCost < selectedCost) {
                 NSString *errorString = [NSString stringWithFormat:@"De maximum kosten voor dit type zijn %0.2f", maxCost];
-                [self showErrorMessage:@"Maximum kosten" :errorString];
+                [HttpResponseHandler showErrorMessageTitle:@"Maximum kosten" Message:errorString];
                 self.costField.text = @"";
                 self.costDecimalField.text = @"";
             }
         } else {
-            [self showErrorMessage:@"Ongeldig bedrag" :@"Het ingevoerde bedrag is ongeldig"];
+            [HttpResponseHandler showErrorMessageTitle:@"Ongeldig bedrag" Message:@"Het ingevoerde bedrag is ongeldig"];
         }
         
     }
-}
-
--(void) showErrorMessage: (NSString*)errorTitle :(NSString*)errorMessage
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:errorTitle
-                                                    message:errorMessage
-                                                   delegate:nil
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
 }
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
@@ -535,13 +537,13 @@
         float selectedCost = [self.costField.text intValue] + ([self.costDecimalField.text intValue]/100);
         
         if (([self.costField.text isEqualToString:@""] || [self.costDecimalField.text isEqualToString:@""]) && self.declarationLine.subtype.ident == 0) {
-            [self showErrorMessage:@"Niets ingevoerd" :@"Er is niets ingevoerd."];
+            [HttpResponseHandler showErrorMessageTitle:@"Niets ingevoerd" Message:@"Er is niets ingevoerd."];
             return NO;
         } else if ([self.costField.text isEqualToString:@"" ] || [self.costDecimalField.text isEqualToString:@""] || selectedCost < 0.00) {
-            [self showErrorMessage:@"Ongeldig bedrag" :@"Er is een ongeldig bedrag ingevoerd."];
+            [HttpResponseHandler showErrorMessageTitle:@"Ongeldig bedrag" Message:@"Er is een ongeldig bedrag ingevoerd."];
             return NO;
         } else if (self.declarationLine.subtype.ident == 0) {
-            [self showErrorMessage:@"Geen Type/Subtype geselecteerd" :@"Er geen Type en/of Subtype geselecteerd."];
+            [HttpResponseHandler showErrorMessageTitle:@"Geen Type/Subtype geselecteerd" Message:@"Er geen Type en/of Subtype geselecteerd."];
             return NO;
         } else {
             return YES;
