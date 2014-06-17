@@ -17,6 +17,7 @@
 #import "StateType.h"
 #import "HttpResponseHandler.h"
 #import "AppDelegate.h"
+#import "DejalActivityView.h"
 
 @interface NewDeclarationViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *supervisor;
@@ -285,7 +286,7 @@
     } else if (self.state == EDIT) {
         [self editDeclaration];
     } else {
-        
+        [DejalBezelActivityView activityViewForView:self.view];
         self.declaration.createdBy = [[[NSUserDefaults standardUserDefaults] stringForKey:@"person_id"] longLongValue];
         self.declaration.className = @"open_declaration";
         self.declaration.status = @"Open";
@@ -339,11 +340,13 @@
                                   
                                   options:kNilOptions
                                   error:&error];
+            [DejalBezelActivityView removeViewAnimated:YES];
             [HttpResponseHandler showSuccessMessageTitle:@"Indienen geslaagd" Message:@"Declaratie is ingediend"];
             [self clearView];
             NSLog(@"JSON response data for saving declaration: %@",json);
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
+            [DejalBezelActivityView removeViewAnimated:YES];
             [HttpResponseHandler handelErrorCode:operation :error:self];
             
         }];
@@ -354,6 +357,7 @@
 
 -(void)deleteDeclaration
 {
+    [DejalBezelActivityView activityViewForView:self.view];
     // Do Request
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
@@ -373,17 +377,20 @@
                               error:&error];
         
         [HttpResponseHandler showSuccessMessageTitle:@"Verwijderen geslaagd" Message:@"Declaratie is verwijderd"];
+        [DejalBezelActivityView removeViewAnimated:YES];
         [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response: %@", json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting supervisor list: %@", error);
+        [DejalBezelActivityView removeViewAnimated:YES];
         [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
 }
 
 -(void)editDeclaration
 {
+    [DejalBezelActivityView activityViewForView:self.view];
     Declaration *decl = self.declaration;
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
@@ -435,11 +442,13 @@
                               options:kNilOptions
                               error:&error];
         [HttpResponseHandler showSuccessMessageTitle:@"Aanpassen geslaagd" Message:@"Declaratie is aangepast"];
+        [DejalBezelActivityView removeViewAnimated:YES];
         [self.navigationController popViewControllerAnimated:YES];
         
         // NSLog(@"JSON response data for saving declaration: %@",json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while saving declaration: %@, %@", error, operation.responseString);
+        [DejalBezelActivityView removeViewAnimated:YES];
         [HttpResponseHandler handelErrorCode:operation :error:self];
         
     }];
@@ -449,6 +458,7 @@
 
 -(void)getSupervisorList
 {
+    [DejalBezelActivityView activityViewForView:self.view];
     // Do Request
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
@@ -503,9 +513,10 @@
                 }
             }
         }
-        
+        [DejalBezelActivityView removeViewAnimated:YES];
         [self.supervisorPicker reloadAllComponents];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [DejalBezelActivityView removeViewAnimated:YES];
         NSLog(@"Error while getting supervisor list: %@", error);
         [HttpResponseHandler handelErrorCode:operation :error:self];
     }];

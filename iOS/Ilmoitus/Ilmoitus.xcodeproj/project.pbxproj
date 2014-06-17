@@ -25,6 +25,7 @@
 		463019FC1917D1D1004D2613 /* UIProgressView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 463019E91917D1D0004D2613 /* UIProgressView+AFNetworking.m */; };
 		463019FD1917D1D1004D2613 /* UIRefreshControl+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 463019EB1917D1D0004D2613 /* UIRefreshControl+AFNetworking.m */; };
 		463019FE1917D1D1004D2613 /* UIWebView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 463019ED1917D1D0004D2613 /* UIWebView+AFNetworking.m */; };
+		4648D9571950C58900F5BA12 /* DejalActivityView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4648D9561950C58900F5BA12 /* DejalActivityView.m */; };
 		4666E4FD192A476900B6AC3F /* NewDeclarationLineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4666E4FC192A476900B6AC3F /* NewDeclarationLineViewController.m */; };
 		46A9D7D11909228A00C5B468 /* DeclarationLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 46A9D7D01909228A00C5B468 /* DeclarationLine.m */; };
 		46AE9B6F190902C700AE3F70 /* Declaration.m in Sources */ = {isa = PBXBuildFile; fileRef = 46AE9B6E190902C700AE3F70 /* Declaration.m */; };
@@ -103,6 +104,8 @@
 		463019EC1917D1D0004D2613 /* UIWebView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWebView+AFNetworking.h"; sourceTree = "<group>"; };
 		463019ED1917D1D0004D2613 /* UIWebView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWebView+AFNetworking.m"; sourceTree = "<group>"; };
 		46438763191CF127006474F0 /* constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = constants.h; sourceTree = "<group>"; };
+		4648D9551950C58900F5BA12 /* DejalActivityView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DejalActivityView.h; sourceTree = "<group>"; };
+		4648D9561950C58900F5BA12 /* DejalActivityView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DejalActivityView.m; sourceTree = "<group>"; };
 		4666E4FB192A476900B6AC3F /* NewDeclarationLineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewDeclarationLineViewController.h; sourceTree = "<group>"; };
 		4666E4FC192A476900B6AC3F /* NewDeclarationLineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewDeclarationLineViewController.m; sourceTree = "<group>"; };
 		46A9D7CF1909228A00C5B468 /* DeclarationLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeclarationLine.h; sourceTree = "<group>"; };
@@ -305,6 +308,8 @@
 		46D94EA119063A08008E6C01 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4648D9551950C58900F5BA12 /* DejalActivityView.h */,
+				4648D9561950C58900F5BA12 /* DejalActivityView.m */,
 				46D94EA919063A08008E6C01 /* AppDelegate.h */,
 				46D94EAA19063A08008E6C01 /* AppDelegate.m */,
 				46D94EA219063A08008E6C01 /* Ilmoitus-Info.plist */,
@@ -445,6 +450,7 @@
 				463019EE1917D1D0004D2613 /* AFHTTPRequestOperation.m in Sources */,
 				463019F01917D1D0004D2613 /* AFHTTPSessionManager.m in Sources */,
 				463019F91917D1D1004D2613 /* UIAlertView+AFNetworking.m in Sources */,
+				4648D9571950C58900F5BA12 /* DejalActivityView.m in Sources */,
 				463019F41917D1D1004D2613 /* AFURLRequestSerialization.m in Sources */,
 				A2BF670D194B6E9600F063A4 /* NewAttachmentViewController.m in Sources */,
 				46D94ED719063EA2008E6C01 /* LoginViewController.m in Sources */,

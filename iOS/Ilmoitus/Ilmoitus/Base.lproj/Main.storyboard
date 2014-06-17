@@ -8,7 +8,7 @@
         <scene sceneID="u7v-Oa-CEK">
             <objects>
                 <navigationController storyboardIdentifier="Declarations" definesPresentationContext="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="rNo-qa-H3S" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Mijn declaraties" id="wzF-LT-iz7"/>
+                    <tabBarItem key="tabBarItem" title="Mijn declaraties" image="icon_declaratie_overzicht" id="wzF-LT-iz7"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="C4w-CP-stM">
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
@@ -85,7 +85,7 @@
         <scene sceneID="iLQ-y1-fpy">
             <objects>
                 <navigationController definesPresentationContext="YES" id="W3p-AS-E6z" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Indienen" id="Irb-Oe-ylH"/>
+                    <tabBarItem key="tabBarItem" title="Indienen" image="icon_declaratie_toevoegen" id="Irb-Oe-ylH"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ZpI-zp-ZNi">
                         <autoresizingMask key="autoresizingMask"/>
                         <textAttributes key="titleTextAttributes">
@@ -642,7 +642,7 @@
     </scenes>
     <resources>
         <image name="icon_declaratie_overzicht" width="34" height="30"/>
-        <image name="icon_declaratie_toevoegen" width="33" height="30"/>
+        <image name="icon_declaratie_toevoegen" width="37" height="30"/>
         <image name="icon_uitloggen" width="30" height="30"/>
         <image name="snsreaal" width="250" height="136"/>
     </resources>

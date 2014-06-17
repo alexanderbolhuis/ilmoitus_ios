@@ -1,3 +1,4 @@
+
 //
 //  FirstViewController.m
 //  Ilmoitus
@@ -13,6 +14,7 @@
 #import "Attachment.h"
 #import "constants.h"
 #import "HttpResponseHandler.h"
+#import "DejalActivityView.h"
 
 @interface MyDeclarationViewController ()
 @property (nonatomic, strong) NSMutableArray *declarationList;
@@ -51,6 +53,7 @@
 - (void)declarationsFromServer
 {
     // Do Request
+    [DejalBezelActivityView activityViewForView:self.view];
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -85,9 +88,10 @@
         
         [self.tableView reloadData];
         [self.refreshControl endRefreshing];
-        
+        [DejalBezelActivityView removeViewAnimated:YES];
         NSLog(@"GET request success response for all declarations: %@", json);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [DejalBezelActivityView removeViewAnimated:YES];
         [HttpResponseHandler handelErrorCode:operation :error:self];
         NSLog(@"GET request Error for all declarations: %@", error);
     }];
@@ -160,6 +164,7 @@
 
 -(void)setFullDeclaration:(int64_t)ident destination:(NewDeclarationViewController *)destination
 {
+    [DejalBezelActivityView activityViewForView:self.view];
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -228,10 +233,12 @@
         dec.attachments = attachments;
         
         destination.declaration = dec;
+        [DejalBezelActivityView removeViewAnimated:YES];
         [destination getSupervisorList];
         NSLog(@"GET request SUCCES for specific declaration: %@", json);
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [DejalBezelActivityView removeViewAnimated:YES];
         NSLog(@"GET request Error for all declarations: %@", error);
         [HttpResponseHandler handelErrorCode:operation :error:self];
     }];

@@ -9,6 +9,7 @@
 #import "LoginViewController.h"
 #import "constants.h"
 #import "HttpResponseHandler.h"
+#import "DejalActivityView.h"
 
 @interface LoginViewController ()
 @property (weak, nonatomic) IBOutlet UITextField *usernamefield;
@@ -85,6 +86,7 @@
 }
 
 - (IBAction)loginAction:(id)sender {
+    [DejalBezelActivityView activityViewForView:self.view];
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
@@ -136,11 +138,13 @@
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 
                 // Perform Segue
+                [DejalBezelActivityView removeViewAnimated:YES];
                 [self performSegueWithIdentifier:@"login_success" sender:self];
                 
                 NSLog(@"%@", json);
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 NSLog(@"Error: %@", responseObject);
+                [DejalBezelActivityView removeViewAnimated:YES];
                 [HttpResponseHandler handelErrorCode:operation :error:self];
             }];
         } else {
