@@ -11,6 +11,4 @@
 
 #define baseURL @"http://8.sns-ilmoitus.appspot.com"
 
-
-
 #endif

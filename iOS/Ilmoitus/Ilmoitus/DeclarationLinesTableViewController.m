@@ -149,6 +149,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete)
     {
         [self.declaration.lines removeObjectAtIndex:indexPath.row];
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
 

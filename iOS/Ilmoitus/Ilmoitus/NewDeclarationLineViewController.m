@@ -99,6 +99,7 @@
     [self setupInputFields];
     [self setupPickers];
     self.add.titleLabel.text = @"Toevoegen";
+    self.cancel.titleLabel.text = @"Annuleren";
     self.title = @"Declaratie regel maken";
 }
 
@@ -106,7 +107,14 @@
 {
     [self setModusNew];
     self.add.titleLabel.text = @"Updaten";
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateNormal];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateHighlighted];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateDisabled];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateSelected];
     self.title = @"Declaratie regel aanpassen";
+    
+    [self.cancel.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [self.add.titleLabel setTextAlignment: NSTextAlignmentCenter];
 }
 
 -(void)setModusView
@@ -495,7 +503,7 @@
         float maxCost = self.declarationLine.subtype.subTypeMaxCost;
         float selectedCost = [self.costField.text intValue] + ([self.costDecimalField.text intValue]/100);
         
-        if(selectedCost != 0.00){
+        if(selectedCost > 0.00){
             
             if (maxCost < selectedCost) {
                 NSString *errorString = [NSString stringWithFormat:@"De maximum kosten voor dit type zijn %0.2f", maxCost];
@@ -524,11 +532,12 @@
 {
     if (sender == self.add)
     {
+        float selectedCost = [self.costField.text intValue] + ([self.costDecimalField.text intValue]/100);
+        
         if (([self.costField.text isEqualToString:@""] || [self.costDecimalField.text isEqualToString:@""]) && self.declarationLine.subtype.ident == 0) {
             [self showErrorMessage:@"Niets ingevoerd" :@"Er is niets ingevoerd."];
             return NO;
-        } else if ([self.costField.text isEqualToString:@"" ] || [self.costDecimalField.text isEqualToString:@""]) {
-            // TODO Make errormessages for each inputfield
+        } else if ([self.costField.text isEqualToString:@"" ] || [self.costDecimalField.text isEqualToString:@""] || selectedCost < 0.00) {
             [self showErrorMessage:@"Ongeldig bedrag" :@"Er is een ongeldig bedrag ingevoerd."];
             return NO;
         } else if (self.declarationLine.subtype.ident == 0) {

@@ -158,6 +158,7 @@
 {
     [self setupImagePicker];
     self.add.titleLabel.text = @"Toevoegen";
+    self.cancel.titleLabel.text = @"Annuleren";
     self.title = @"attachment toevoegen";
 }
 
@@ -173,6 +174,15 @@
     [self.add setTitle:@"Updaten" forState:UIControlStateHighlighted];
     [self.add setTitle:@"Updaten" forState:UIControlStateDisabled];
     [self.add setTitle:@"Updaten" forState:UIControlStateSelected];
+    
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateNormal];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateHighlighted];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateDisabled];
+    [self.cancel setTitle:@"Verwijder" forState:UIControlStateSelected];
+    
+    [self.cancel.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    [self.add.titleLabel setTextAlignment: NSTextAlignmentCenter];
+    
     self.title = @"Bijlage aanpassen";
 }
 

@@ -117,17 +117,16 @@
                 [[NSUserDefaults standardUserDefaults] setObject:json[@"employee_number"] forKey:@"person_employee_number"];
                 [[NSUserDefaults standardUserDefaults] setObject:json[@"email"] forKey:@"person_email"];
                 [[NSUserDefaults standardUserDefaults] setObject:json[@"supervisor"] forKey:@"supervisor"];
-                // TODO Department
                 
                 [[NSUserDefaults standardUserDefaults] synchronize];
+                
+                // Perform Segue
+                [self performSegueWithIdentifier:@"login_success" sender:self];
                 
                 NSLog(@"%@", json);
             } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 NSLog(@"Error: %@", responseObject);
             }];
-            
-            // Perform Segue
-            [self performSegueWithIdentifier:@"login_success" sender:self];
         } else {
             NSLog(@"JSON: %@",@"Failed");
                 self.loginFailedAlert = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -161,16 +160,5 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
