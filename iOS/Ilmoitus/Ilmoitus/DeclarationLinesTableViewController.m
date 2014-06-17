@@ -35,6 +35,10 @@
 {
     UIBarButtonItem *add = [[UIBarButtonItem alloc]initWithTitle:@"+" style:UIBarButtonSystemItemAdd target:self action:@selector(addNew)];
     
+    [add setTitleTextAttributes:
+     @{NSFontAttributeName:[UIFont fontWithName:@"AmericanTypewriter-Light" size:30.0]
+       }
+                       forState:UIControlStateNormal];
     self.navigationItem.rightBarButtonItem = add;
 }
 
