@@ -100,18 +100,24 @@
     [self setupPickers];
     self.add.titleLabel.text = @"Toevoegen";
     self.cancel.titleLabel.text = @"Annuleren";
-    self.title = @"Declaratie regel maken";
+    
+    [self.navigationItem setTitle:@"Declaratie regel maken"];
 }
 
 -(void)setModusEdit
 {
     [self setModusNew];
     self.add.titleLabel.text = @"Updaten";
+    [self.add setTitle:@"Updaten" forState:UIControlStateNormal];
+    [self.cancel setTitle:@"Updaten" forState:UIControlStateHighlighted];
+    [self.cancel setTitle:@"Updaten" forState:UIControlStateDisabled];
+    [self.cancel setTitle:@"Updaten" forState:UIControlStateSelected];
+    
     [self.cancel setTitle:@"Verwijder" forState:UIControlStateNormal];
     [self.cancel setTitle:@"Verwijder" forState:UIControlStateHighlighted];
     [self.cancel setTitle:@"Verwijder" forState:UIControlStateDisabled];
     [self.cancel setTitle:@"Verwijder" forState:UIControlStateSelected];
-    self.title = @"Declaratie regel aanpassen";
+    [self.navigationItem setTitle:@"Declaratie regel aanpassen"];
     
     [self.cancel.titleLabel setTextAlignment: NSTextAlignmentCenter];
     [self.add.titleLabel setTextAlignment: NSTextAlignmentCenter];
@@ -119,7 +125,7 @@
 
 -(void)setModusView
 {
-    self.title =@"Declaratie regel inzien";
+    [self.navigationItem setTitle:@"Declaratie regel inzien"];
     [self tearDownInput];
 }
 

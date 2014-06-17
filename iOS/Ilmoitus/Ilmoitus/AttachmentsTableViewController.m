@@ -31,12 +31,7 @@
 {
     [super viewDidLoad];
     
-    self.navigationItem.title = @"Bijlages";
-    
-    if(self.state != VIEW)
-    {
-        [self setupToolBar];
-    }
+    [self setModus:self.state];
 }
 
 -(void)setupToolBar
@@ -97,12 +92,48 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - Table view data source
+-(void)setModus:(StateType)state
+{
+    switch (state) {
+        case EDIT:
+            [self setModusEdit];
+            break;
+        case VIEW:
+            [self setModusView];
+            break;
+        default:
+            [self setModusNew];
+            break;
+    }
+}
+
+-(void)setModusNew
+{
+    [self.navigationItem setTitle:@"Declaratie aanmaken"];
+    [self setupToolBar];
+    
+}
+
+-(void)setModusEdit
+{
+    [self.navigationItem setTitle:@"Declaratie aanpassen"];
+    [self setupToolBar];
+}
+
+-(void)setModusView
+{
+    [self.navigationItem setTitle:@"Declaratie bekijken"];
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
     return 1;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @"Bijlages";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
