@@ -22,12 +22,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    [self setModus:self.state];
     
     self.image.contentMode = UIViewContentModeScaleAspectFit;
     self.image.clipsToBounds = YES;
     self.image.image = self.attachment.image;
+    [self setModus:self.state];
 }
 
 -(void)reloadFile

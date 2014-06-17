@@ -259,7 +259,6 @@
         
         NSIndexPath *path = [self.table indexPathForSelectedRow];
         Attachment *attachment = [self.declaration.attachments objectAtIndex:path.row];
-        [self getAttachmentToken:attachment Destination:destination];
         destination.attachment = attachment;
         
         if(self.state == NEW)
@@ -270,6 +269,8 @@
         {
             destination.state = self.state;
         }
+        
+        [self getAttachmentToken:attachment Destination:destination];
     }
     else if([[segue identifier] isEqualToString:@"newAttachment"])
     {
