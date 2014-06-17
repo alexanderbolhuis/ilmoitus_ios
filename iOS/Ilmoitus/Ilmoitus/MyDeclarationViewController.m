@@ -76,12 +76,7 @@
             [declaration.assignedTo addObject:assigned];
             declaration.itemsCount = [decl[@"items_count"] intValue];
             declaration.itemsTotalPrice = [decl[@"items_total_price"] floatValue];
-            NSDateFormatter *formatter = [NSDateFormatter new];
-            formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
-            
-            NSDate *date = [formatter dateFromString:decl[@"created_at"]];
-            [formatter setDateFormat:@"dd-MM-yyyy"];
-            declaration.createdAt = [formatter stringFromDate:date];
+            declaration.createdAt = decl[@"created_at"];
             [declarationsFound addObject:declaration];
         }
         
@@ -132,7 +127,15 @@
     createdAtlabel = (UILabel *)[cell viewWithTag:1];
     [createdAtlabel adjustsFontSizeToFitWidth];
     
-    createdAtlabel.text = [NSString stringWithFormat:@"Declaratie op %@", declaration.createdAt];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
+    NSDate *date = [formatter dateFromString:declaration.createdAt];
+    
+    [formatter setDateFormat:@"dd-MM-yyyy"];
+    NSString *dateString = [formatter stringFromDate:date];
+
+    
+    createdAtlabel.text = [NSString stringWithFormat:@"Declaratie op %@", dateString];
     
     UILabel *statusLabel;
     

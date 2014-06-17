@@ -34,4 +34,21 @@
     return self.itemsTotalPrice;
 }
 
+-(void)setCreatedAt:(NSString *)createdAt
+{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
+    NSDate *dateFromBE = [formatter dateFromString:createdAt];
+    
+    if (dateFromBE == nil) {
+        formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss";
+        dateFromBE = [formatter dateFromString:createdAt];
+    }
+    
+    formatter.dateFormat = @"yyyy-MM-dd' 'HH:mm:ss.S";
+    NSString *dateFromBEString = [formatter stringFromDate:dateFromBE];
+    
+    _createdAt = dateFromBEString;
+}
+
 @end
