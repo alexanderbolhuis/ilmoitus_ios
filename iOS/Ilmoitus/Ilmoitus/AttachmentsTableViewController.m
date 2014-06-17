@@ -193,6 +193,7 @@
 
 -(void)getAttachmentToken:(Attachment *)att Destination:(NewAttachmentViewController *)destination
 {
+    [DejalBezelActivityView activityViewForView:destination.view];
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
     
@@ -218,6 +219,7 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Error while getting attachment token: %@", error);
+        [DejalBezelActivityView removeViewAnimated:YES];
         [HttpResponseHandler handelErrorCode:operation :error:self];
     }];
 }
@@ -238,8 +240,10 @@
                                    parameters:nil
                                       success:^(AFHTTPRequestOperation *operation, id responseObject) {
                                           NSLog(@"successful download to %@", path);
+                                          [DejalBezelActivityView removeViewAnimated:YES];
                                           [destination reloadFile];
                                       } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                                          [DejalBezelActivityView removeViewAnimated:YES];
                                           [HttpResponseHandler handelErrorCode:operation :error:self];
                                           NSLog(@"Error: %@", error);
                                       }];

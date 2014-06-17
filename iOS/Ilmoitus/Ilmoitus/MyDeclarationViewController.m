@@ -164,7 +164,7 @@
 
 -(void)setFullDeclaration:(int64_t)ident destination:(NewDeclarationViewController *)destination
 {
-    [DejalBezelActivityView activityViewForView:self.view];
+    [DejalBezelActivityView activityViewForView:destination.view];
     AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
     
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
