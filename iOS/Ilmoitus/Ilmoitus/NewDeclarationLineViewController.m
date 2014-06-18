@@ -15,6 +15,7 @@
 #import "Attachment.h"
 #import "NewDeclarationViewController.h"
 #import "HttpResponseHandler.h"
+#import "DejalActivityView.h"
 
 @interface NewDeclarationLineViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *add;
@@ -400,6 +401,8 @@
     DeclarationType *type = [self.typeList objectAtIndex:selected];
     self.typeField.text = type.mainTypeName;
     self.declarationLine.type = type;
+    self.subtypeField.text = @"";
+    self.declarationLine.subtype = nil;
     [self downLoadSubTypes:type.ident];
     [self.pickerViewPopup dismissWithClickedButtonIndex:1 animated:YES];
 }
@@ -428,6 +431,7 @@
 {
     if(self.state!=VIEW)
     {
+        [DejalBezelActivityView activityViewForView:self.view];
         NSMutableArray *declarationsTypesFound = [[NSMutableArray alloc] init];
         AFHTTPRequestOperationManager *manager = [HttpResponseHandler createNewHttpRequestOperationManager];
         
@@ -456,10 +460,12 @@
              
              NSLog(@"GET request success response for all declarations: %@", json);
              self.typeList = declarationsTypesFound;
+             [DejalBezelActivityView removeViewAnimated:YES];
              [self.typePicker reloadAllComponents];
          }
              failure:^(AFHTTPRequestOperation *operation, NSError *error)
          {
+             [DejalBezelActivityView removeViewAnimated:YES];
              NSLog(@"GET request Error for all declarations main types: %@", error);
              [HttpResponseHandler handelErrorCode:operation :error:self];
          }];
@@ -470,6 +476,7 @@
 {
     if(self.state != VIEW)
     {
+        [DejalBezelActivityView activityViewForView:self.view];
         NSString *combinedURL = [NSString stringWithFormat:@"%@%@%lld", baseURL, @"/declarationtype/", mainTpyeId];
         
         NSMutableArray *declarationsSubTypesFound = [[NSMutableArray alloc] init];
@@ -504,11 +511,13 @@
              
              NSLog(@"GET request success response for all declarations sub types: %@", json);
              self.subTypeList = declarationsSubTypesFound;
+             [DejalBezelActivityView removeViewAnimated:YES];
              [self.subTypePicker reloadAllComponents];
          }
              failure:^(AFHTTPRequestOperation *operation, NSError *error)
          {
              NSLog(@"GET request Error for all declarations: %@", error);
+             [DejalBezelActivityView removeViewAnimated:YES];
              [HttpResponseHandler handelErrorCode:operation :error:self];
          }];
     }

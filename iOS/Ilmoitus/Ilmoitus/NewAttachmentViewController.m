@@ -40,7 +40,7 @@
     [super viewDidAppear:animated];
     
     NSString *path = [NSTemporaryDirectory() stringByAppendingPathComponent:self.attachment.name];
-    self.image.image = [UIImage imageWithContentsOfFile:path];
+    self.image.image = [UIImage imageWithContentsOfFile:path];  
 }
 
 - (void)didReceiveMemoryWarning
